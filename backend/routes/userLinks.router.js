@@ -4,10 +4,8 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
   res.json({
-    message: "This is the stats router",
+    message: "All your links are here",
   });
 });
-
-router.post();
 
 module.exports = router;

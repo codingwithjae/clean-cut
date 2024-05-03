@@ -3,7 +3,9 @@ const express = require("express");
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.send("This is the shorten router");
+  res.json({
+    message: "This is the shorten page",
+  });
 });
 
 module.exports = router;

@@ -1,10 +1,6 @@
-const {
-  saveUrl,
-  getUrl,
-  deleteUrl,
-  updateShortId,
-} = require("../models/url.model.js");
-const { v4: uuidv4 } = require("uuid");
+const { saveUrl, getUrl, deleteUrl, updateShortId } = require('../models/url.model.js');
+const { getUrlsByUserId } = require('../models/user.model.js');
+const { v4: uuidv4 } = require('uuid');
 
 async function privateUrlGenerator(req, res) {
   const { originalUrl } = req.body;
@@ -15,16 +11,16 @@ async function privateUrlGenerator(req, res) {
     await saveUrl(originalUrl, shortId, userId);
 
     res.status(201).json({
-      message: "URL shortened successfully",
-      shortUrl: `http://localhost:4000/${shortId}`,
+      message: 'URL shortened successfully',
+      shortUrl: `http://localhost:4000/${shortId}`
     });
 
     console.log(`URL shortened with id ${shortId} and stored in the database`);
   } catch (error) {
-    console.error("Error in generating the short URL", error);
+    console.error('Error in generating the short URL', error);
 
     res.status(500).json({
-      message: "Internal server error, error in generating the short URL",
+      message: 'Internal server error, error in generating the short URL'
     });
   }
 }
@@ -37,16 +33,16 @@ async function publicUrlGenerator(req, res) {
     await saveUrl(originalUrl, shortId, null);
 
     res.status(201).json({
-      message: "URL shortened successfully",
-      shortUrl: `http://localhost:4000/${shortId}`,
+      message: 'URL shortened successfully',
+      shortUrl: `http://localhost:4000/${shortId}`
     });
 
     console.log(`URL shortened with id ${shortId} and stored in the database`);
   } catch (error) {
-    console.error("Error in generating the short URL", error);
+    console.error('Error in generating the short URL', error);
 
     res.status(500).json({
-      message: "Internal server error, error in generating the short URL",
+      message: 'Internal server error, error in generating the short URL'
     });
   }
 }
@@ -62,21 +58,17 @@ async function redirectUrl(req, res) {
     if (result) {
       const originalURL = result.originalUrl;
 
-      console.log(
-        `This is the Original URL in the Database ${result.originalUrl}`
-      );
+      console.log(`This is the Original URL in the Database ${result.originalUrl}`);
 
       console.log(`Redirecting to: ${originalURL}`);
 
       res.redirect(originalURL);
     } else {
-      res.status(404).json({ message: "URL not found" });
+      res.status(404).json({ message: 'URL not found' });
     }
   } catch (error) {
-    console.error("Error in redirecting the URL", error);
-    res
-      .status(500)
-      .json({ message: "Internal server error, error in redirecting the URL" });
+    console.error('Error in redirecting the URL', error);
+    res.status(500).json({ message: 'Internal server error, error in redirecting the URL' });
   }
 }
 
@@ -90,16 +82,16 @@ async function updateUrlId(req, res) {
 
     if (result) {
       res.status(200).json({
-        message: "shortId updated successfully in the Database",
-        shortUrl: `http://localhost:4000/${newShortId}`,
+        message: 'shortId updated successfully in the Database',
+        shortUrl: `http://localhost:4000/${newShortId}`
       });
     } else {
-      res.status(404).json({ message: "URL not found" });
+      res.status(404).json({ message: 'URL not found' });
     }
   } catch (error) {
-    console.error("Error in updating the shortId", error);
+    console.error('Error in updating the shortId', error);
     res.status(500).json({
-      message: "Internal server error, error in updating the shortId",
+      message: 'Internal server error, error in updating the shortId'
     });
   }
 }
@@ -113,17 +105,31 @@ async function deleteShortenedUrl(req, res) {
     const result = await deleteUrl(shortId);
 
     if (result) {
-      res
-        .status(200)
-        .json({ message: "URL deleted successfully from the Database" });
+      res.status(200).json({ message: 'URL deleted successfully from the Database' });
     } else {
-      res.status(404).json({ message: "URL not found" });
+      res.status(404).json({ message: 'URL not found' });
     }
   } catch (error) {
-    console.error("Error in deleting the URL", error);
-    res
-      .status(500)
-      .json({ message: "Internal server error, error in deleting the URL" });
+    console.error('Error in deleting the URL', error);
+    res.status(500).json({ message: 'Internal server error, error in deleting the URL' });
+  }
+}
+
+async function getUserLinks(req, res) {
+  const userId = req.user.id;
+
+  console.log('User ID:', userId);
+
+  try {
+    const links = await getUrlsByUserId(userId);
+
+    res.status(200).json(links);
+  } catch (error) {
+    console.error('Error in fetching user links', error);
+
+    res.status(500).json({
+      message: 'Internal server error, error in fetching user links'
+    });
   }
 }
 
@@ -133,4 +139,5 @@ module.exports = {
   redirectUrl,
   deleteShortenedUrl,
   updateUrlId,
+  getUserLinks
 };
