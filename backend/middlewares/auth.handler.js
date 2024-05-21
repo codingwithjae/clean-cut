@@ -18,10 +18,10 @@ function registrationValidation(req, res, next) {
 }
 
 function loginValidation(req, res, next) {
-  const { username } = req.body;
+  const { username, password } = req.body;
 
-  if (!username) {
-    return res.status(400).json({ message: 'Username is required' });
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username and password are required' });
   }
 
   const userExist = checkingUsername(username);
@@ -53,6 +53,7 @@ async function jwtHandler(req, res, next) {
   try {
     const decoded = await decodeToken(token);
     req.user = decoded;
+    console.log('Decoded user:', req.user);
     next();
   } catch (error) {
     return res.status(403).json({ message: 'Authentication token not valid' });

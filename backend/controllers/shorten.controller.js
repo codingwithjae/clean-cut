@@ -1,4 +1,4 @@
-const { saveUrl, getUrl, deleteUrl, updateShortId } = require('../models/url.model.js');
+const { saveUrl, getUrl, deleteUrl, updateShortId, incrementClicks } = require('../models/shorten.model.js');
 const { getUrlsByUserId } = require('../models/user.model.js');
 const { v4: uuidv4 } = require('uuid');
 
@@ -56,6 +56,8 @@ async function redirectUrl(req, res) {
     const result = await getUrl(shortId);
 
     if (result) {
+      await incrementClicks(shortId);
+
       const originalURL = result.originalUrl;
 
       console.log(`This is the Original URL in the Database ${result.originalUrl}`);
@@ -71,9 +73,9 @@ async function redirectUrl(req, res) {
     res.status(500).json({ message: 'Internal server error, error in redirecting the URL' });
   }
 }
-
 async function updateUrlId(req, res) {
-  const { shortId, newShortId } = req.body;
+  const { shortId } = req.params;
+  const { newShortId } = req.body;
 
   console.log(`Changing shortId from ${shortId} to ${newShortId}`);
 
@@ -86,7 +88,7 @@ async function updateUrlId(req, res) {
         shortUrl: `http://localhost:4000/${newShortId}`
       });
     } else {
-      res.status(404).json({ message: 'URL not found' });
+      res.status(404).json({ message: 'URL not found or no changes were made' });
     }
   } catch (error) {
     console.error('Error in updating the shortId', error);

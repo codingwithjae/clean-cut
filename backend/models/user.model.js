@@ -11,7 +11,7 @@ function checkingUsername(username) {
   return !!result;
 }
 
-async function getUrlsByUserId(userId) {
+function getUrlsByUserId(userId) {
   const gettingLinks = db.prepare('SELECT * FROM urls WHERE userId = ?');
   return gettingLinks.all(userId);
 }

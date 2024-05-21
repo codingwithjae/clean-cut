@@ -24,12 +24,6 @@ async function loginHandler(req, res) {
   const { username, password } = req.body;
   const credentials = await gettingUserCredentials(username);
 
-  if (!credentials) {
-    return res.status(401).json({
-      message: 'Login failed, user is not registered or credentials are invalid'
-    });
-  }
-
   try {
     if (await argon2.verify(credentials.password, password)) {
       const token = await tokenGeneration({
