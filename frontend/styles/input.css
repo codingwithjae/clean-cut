@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  font-family: var(--Family);
+  font-weight: var(--Weights);
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-image: url('./assets/background.webp');
+}
+
+input {
+  outline: none;
+}
+
+
+ul {
+  margin-right: 1rem;
+}
+
+li {
+  margin-left: 1rem;
+  margin-top: 1rem;
+}
+
+.shortener__form--url::placeholder {
+  position: relative;
+  border-radius: 0.4rem;
+  color: #dee0f5;
+  outline-width: 0.1px;
+}
+
+.shortener__form--button:hover {
+  background-color: #5139ff;
+}
+
+.dashboard__links-container:hover .dashboard__tooltip {
+  visibility: visible;
+}
+
+/* Si no tienes un archivo de estilos, puedes añadir estos estilos directamente en tu archivo HTML con el tag <style> */
+
+.dashboard__tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+.dashboard__tooltip {
+  visibility: hidden;
+  width: max-content;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  font-size: 12px;
+}
+
+.dashboard__tooltip-container:hover .dashboard__tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.header__navbar-container {
+  top: -160%;
+
+}
+
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  transition: opacity 0.75s, visibility 0.75s;
+}
+
+.loader__hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader::after {
+  content: "";
+  width: 75px;
+  height: 75px;
+  border: 15px solid #dddddd;
+  border-top-color: #1d4ed8;
+  border-radius: 50%;
+  animation: loading 0.75s ease infinite;
+}
+
+@keyframes loading {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+

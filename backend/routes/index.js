@@ -1,8 +1,8 @@
 const express = require('express');
-const shortenRouter = require('./shorten.router');
+const shortenRouter = require('./shorten.router.js');
 const userLinksRouter = require('./userLinks.router.js');
-const loggingRouter = require('./login.router');
-const registrationRouter = require('./register.router');
+const loggingRouter = require('./login.router.js');
+const registrationRouter = require('./register.router.js');
 const { urlValidator, shortIdValidator, userIdValidator, validateShortIdUpdate } = require('../middlewares/shorten.handler.js');
 const { loginValidation, jwtHandler, registrationValidation } = require('../middlewares/auth.handler.js');
 const { publicUrlGenerator, redirectUrl, deleteShortenedUrl, updateUrlId, privateUrlGenerator, getUserLinks } = require('../controllers/shorten.controller.js');
