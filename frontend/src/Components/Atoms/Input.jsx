@@ -3,9 +3,12 @@ export default function Input({ placeholder }) {
     <input
       type="text"
       placeholder={placeholder}
-      className={`w-[385px] h-[68px] px-5 text-[18px]  bg-pickled-bluewood-950 text-white border border-gray-700 rounded-lg outline-none
-       
-        `}
+      className="
+        w-full max-w-2xs min-w-3xs h-[60px] px-5 text-lg 
+        bg-pickled-bluewood-950 text-white 
+        border border-gray-700 
+        rounded-lg outline-none
+      "
     />
   );
 }

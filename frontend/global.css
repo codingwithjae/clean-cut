@@ -6,9 +6,5 @@
   --color-cerulean-blue-800: #0a42c3;
   --color-pickled-bluewood-950: #202531;
 
-  /* 🔠 Typography */
-  --font-heading: 36px;
-  --font-sm: 18px;
-
-  --font-sans: ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-sans: 'Poppins';
 }

@@ -1,12 +1,14 @@
 import React from "react";
-import ShortenForm from "./Components/Molecules/ShortenForm";
-import "./styles/input.css"; // Importa los estilos de Tailwind
+import { ToastContainer } from "react-toastify";
+import HomePage from "./Components/Page/HomePage";
+import "/global.css";
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <ShortenForm />
-    </div>
+    <>
+      <HomePage />
+      <ToastContainer position="bottom-right" autoClose={3000} />
+    </>
   );
 }
 
