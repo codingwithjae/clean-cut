@@ -11,7 +11,7 @@ export default function ShortenForm() {
   });
 
   return (
-    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 mt-4">
+    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4 mt-10">
       <div
         className="
           flex 

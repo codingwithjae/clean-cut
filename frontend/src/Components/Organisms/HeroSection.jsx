@@ -1,7 +1,7 @@
 export default function HeroSection() {
   return (
     <section className="tracking-wide flex flex-col items-center text-center text-white">
-      <div className="mb-12 md:mb-10 lg:mb-0 lg:w-7xl">
+      <div className="mb-12 md:mb-10 lg:mb-0 lg:w-5xl xl:w-7xl">
         <h2 className=" text-5xl font-medium leading-15 text-transparent bg-clip-text bg-gradient-to-b from-gray-50 to-gray-500 animate-gradient md:leading-21 md:text-7xl lg:leading-tight">
           Allow people find you on the internet. Superfast!
         </h2>

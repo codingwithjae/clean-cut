@@ -2,50 +2,48 @@ import React, { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import logo from '../../assets/logo.webp';
 import Button from '../Atoms/Button';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 767px)'); // Hook to detect mobile screens
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
-    <header className="w-full h-auto flex justify-center p-5">
-      <nav className="hidden md:flex w-full items-center justify-between px-4 lg:px-8">
-        {/* Navigation Links (Left) */}
-        <ul className="hidden md:flex items-center gap-8">
-          <li className="cursor-pointer hover:text-blue-500">Features</li>
-        </ul>
-
-        {/* Logo (Center) */}
-        <div className="flex justify-center items-center h-24 absolute left-1/2 transform -translate-x-1/2">
-          <img className="w-72 cursor-pointer" src={logo} alt="Logo of the app" />
-        </div>
-
-        {/* Buttons (Right) */}
-        <div className="hidden md:flex items-center gap-8">
-          <Button text="Login" />
-          <Button text="Sign Up" />
-        </div>
-      </nav>
-
-      {/* Mobile Menu */}
-      <div className="md:hidden flex w-full items-center justify-between px-4">
+    <nav className="w-full bg-gray-800 md:bg-gray-900 text-white px-4 lg:px-8 justify-center">
+      <div className="flex items-center justify-between h-20">
         {/* Logo */}
-        <div className="flex justify-start items-center">
-          <img className="w-24 h-auto cursor-pointer" src={logo} alt="Logo of the app" />
+        <div className="flex items-center gap-8 flex-grow relative right-8">
+          <img className="w-[200px] cursor-pointer" src={logo} alt="Logo of the app" />
         </div>
 
-        {/* Hamburger Menu */}
-        <button className={`text-white focus:outline-none transition-transform duration-300 ${isMenuOpen ? 'rotate-90' : 'rotate-0'}`} onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          {isMenuOpen ? <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
-        </button>
-      </div>
+        {/* Toggle Button (Visible on Mobile) */}
+        {isMobile && (
+          <button
+           className={`text-white focus:outline-none md:hidden transition-transform duration-300 ${
+              isMenuOpen ? 'rotate-90' : 'rotate-0'
+            }`}
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ?  <FaTimes className="w-6 h-6" /> : <FaBars className="w-6 h-6" />}
+          </button>
+        )}
 
-      {/* Dropdown Menu (Mobile) */}
-      <ul className={`${isMenuOpen ? 'flex' : 'hidden'} md:hidden flex-col items-center gap-8 absolute top-16 left-0 w-full bg-gray-900 p-4 transition-all duration-300`}>
-        <li className="cursor-pointer hover:text-blue-500">Features</li>
-        <li className="cursor-pointer hover:text-blue-500">FAQs</li>
-        <Button text="Login" />
-        <Button text="Sign Up" />
-      </ul>
-    </header>
+        {/* Navigation Links and Buttons */}
+        <div className={`flex items-center gap-8 ${isMobile && isMenuOpen ? 'absolute top-20 left-0 w-full flex-col bg-gray-800 p-4 shadow-md z-50' : 'hidden md:flex'}`}>
+          <ul className="flex items-center gap-6 duration-500 ease-in-out">
+            <li className="cursor-pointer hover:text-blue-500">
+              <a href="#features">Features</a>
+            </li>
+          </ul>
+          <Button text="Login" variant={isMobile ? undefined : "small"} />
+          <Button text="Sign Up" variant={isMobile ? undefined : "small"} />
+        </div>
+      </div>
+    </nav>
   );
 }
