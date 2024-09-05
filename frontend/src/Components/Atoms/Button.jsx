@@ -1,8 +1,9 @@
 export default function Button({ text, variant }) {
-  const buttonSize = variant === 'small' ? 'w-[152px]' : 'w-2xs md:w-[195px]';
+  const buttonSize = variant === 'small' ? 'w-[142px] ' : 'w-2xs md:w-[195px]';
 
   return (
     <button
+      type="button"
       className={`
         flex items-center justify-center 
         text-lg font-normal text-white 
