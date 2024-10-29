@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import '/global.css';
+import 'react-toastify/dist/ReactToastify.css';
 import App from './App';
 
 // Implementar validaciones de formulario para inicio de sesión y registro con React Toastify // PENDIENTE

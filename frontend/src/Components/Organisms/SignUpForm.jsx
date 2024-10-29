@@ -1,5 +1,5 @@
 import Button from '../Atoms/Button';
-import { useCloseModal } from '../../hooks/useCloseModal';
+import useCloseModal from '../../hooks/useCloseModal';
 
 export default function SignUpForm() {
   const closeModal = useCloseModal();
@@ -9,7 +9,7 @@ export default function SignUpForm() {
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-xs">
         <div className="flex justify-between items-center border-b border-b-gray-400 pb-4">
           <h2 className="text-2xl font-semibold text-white">Sign Up</h2>
-          <Button variant="icon" icon="close" onClick={closeModal} ariaLabel="Close modal" />
+          <Button variant="icon" icon="close" type="button" onClick={closeModal} ariaLabel="Close modal" />
         </div>
 
         <form className="mt-4 space-y-4">

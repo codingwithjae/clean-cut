@@ -1,4 +1,4 @@
-import { useCloseModal } from '../../hooks/useCloseModal';
+import  useCloseModal  from '../../hooks/useCloseModal';
 import Button from '../Atoms/Button';
 
 export default function FeaturesModal() {

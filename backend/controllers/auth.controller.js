@@ -4,13 +4,13 @@ const { tokenGeneration } = require('../utils/jwtConfig.js');
 const { saveUserCredentials, gettingUserCredentials } = require('../models/user.model.js');
 
 async function registrationHandler(req, res) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   const apiKey = uuidv4();
   const passwordHash = await argon2.hash(password);
 
   try {
-    await saveUserCredentials(username, passwordHash, apiKey);
+    await saveUserCredentials(email, passwordHash, apiKey);
     res.status(201).json({
       message: 'User registered successfully',
       apiKey: `your registration key is: ${apiKey}`
@@ -21,8 +21,8 @@ async function registrationHandler(req, res) {
 }
 
 async function loginHandler(req, res) {
-  const { username, password } = req.body;
-  const credentials = await gettingUserCredentials(username);
+  const { email, password } = req.body;
+  const credentials = await gettingUserCredentials(email);
 
   try {
     if (await argon2.verify(credentials.password, password)) {
@@ -31,7 +31,7 @@ async function loginHandler(req, res) {
         username: credentials.username
       });
       res.status(200).json({
-        message: `Welcome ${username}, your log in was successful`,
+        message: `Welcome ${email}, your log in was successful`,
         accessToken: token
       });
     } else {

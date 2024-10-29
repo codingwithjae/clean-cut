@@ -2,32 +2,32 @@ const { checkingUsername } = require('../models/user.model.js');
 const { decodeToken } = require('../utils/jwtConfig.js');
 
 function registrationValidation(req, res, next) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  const userExist = checkingUsername(username);
+  const userExist = checkingUsername(email);
 
   if (userExist) {
-    return res.status(409).json({ message: 'Username already exists' });
+    return res.status(409).json({ message: 'Email already exists' });
   }
 
   next();
 }
 
 function loginValidation(req, res, next) {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ message: 'Username and password are required' });
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  const userExist = checkingUsername(username);
+  const userExist = checkingUsername(email);
 
   if (!userExist) {
-    return res.status(401).json({ message: 'User does not exist, you must register first' });
+    return res.status(401).json({ message: 'Email does not exist, you must register first' });
   }
 
   next();

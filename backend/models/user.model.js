@@ -1,13 +1,13 @@
 const db = require('../database/database.js');
 
-function saveUserCredentials(username, password, apiKey) {
-  const savingCredentials = db.prepare('INSERT INTO users (username, password, apiKey) VALUES (?, ?, ?)');
-  savingCredentials.run(username, password, apiKey);
+function saveUserCredentials(email, password, apiKey) {
+  const savingCredentials = db.prepare('INSERT INTO users (email, password, apiKey) VALUES (?, ?, ?)');
+  savingCredentials.run(email, password, apiKey);
 }
 
-function checkingUsername(username) {
-  const checkingUsername = db.prepare('SELECT 1 FROM users WHERE username = ?');
-  const result = checkingUsername.get(username);
+function checkingUsername(email) {
+  const checkingUsername = db.prepare('SELECT 1 FROM users WHERE email = ?');
+  const result = checkingUsername.get(email);
   return !!result;
 }
 
@@ -16,9 +16,9 @@ function getUrlsByUserId(userId) {
   return gettingLinks.all(userId);
 }
 
-function gettingUserCredentials(username) {
-  const gettingCredentials = db.prepare('SELECT * FROM users WHERE username = ?');
-  return gettingCredentials.get(username);
+function gettingUserCredentials(email) {
+  const gettingCredentials = db.prepare('SELECT * FROM users WHERE email = ?');
+  return gettingCredentials.get(email);
 }
 
 module.exports = {

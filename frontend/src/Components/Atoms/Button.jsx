@@ -2,7 +2,7 @@ import React from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import { FaBars, FaTimes } from 'react-icons/fa';
 
-export default function Button({ text, variant, icon, onClick, ariaLabel, isMenuOpen }) {
+export default function Button({ text, type, variant, icon, onClick, ariaLabel, isMenuOpen }) {
   const stylesVariants = {
     large: 'w-[195px] h-[60px]',
     small: 'w-[142px] h-[60px]',
@@ -18,7 +18,7 @@ export default function Button({ text, variant, icon, onClick, ariaLabel, isMenu
 
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       aria-label={ariaLabel}
       className={`

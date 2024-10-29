@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 
-export const useCloseModal = () => {
+export default function useCloseModal() {
   const navigate = useNavigate();
 
   const closeModal = () => {
@@ -8,4 +8,4 @@ export const useCloseModal = () => {
   };
 
   return closeModal;
-};
+}
