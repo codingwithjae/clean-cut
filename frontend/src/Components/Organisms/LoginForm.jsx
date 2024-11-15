@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
-import useCloseModal from '../../hooks/useCloseModal';
+import useCloseModal from '../../hooks/handleModal';
 import authService from '../../api/auth.api';
 import Button from '../Atoms/Button';
 
 export default function LoginForm() {
-  const closeModal = useCloseModal();
-
-  const navigate = useNavigate();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleModal = useCloseModal();
+  const navigate = useNavigate();
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -40,11 +39,11 @@ export default function LoginForm() {
   };
 
   return (
-    <section className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-xs">
+    <section className="fixed bg-black/55 inset-0 flex items-center justify-center z-50">
+      <div className="bg-gray-800 p-10 rounded-lg shadow-lg w-[350px] h-[420px] flex flex-col justify-center">
         <div className="flex justify-between items-center border-b border-b-gray-400 pb-2">
           <h2 className="text-2xl font-semibold text-white">Login</h2>
-          <Button variant="icon" icon="close" onClick={closeModal} ariaLabel="Close modal" />
+          <Button variant="icon" icon="close" onClick={handleModal} ariaLabel="Close modal" />
         </div>
 
         <form className="mt-4 space-y-4" onSubmit={handleLogin}>
@@ -79,7 +78,7 @@ export default function LoginForm() {
           </div>
 
           <div className="flex justify-center">
-            <Button text="Submit" type="submit" variant="large" />
+            <Button text="Login" type="Submit" variant="large" />
           </div>
         </form>
       </div>

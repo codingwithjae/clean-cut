@@ -1,15 +1,14 @@
 import Button from '../Atoms/Button';
-import useCloseModal from '../../hooks/useCloseModal';
+import useCloseModal from '../../hooks/handleModal';
 
 export default function SignUpForm() {
-  const closeModal = useCloseModal();
-
+  const handleModal = useCloseModal();
   return (
-    <section className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-8">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-xs">
+    <section className="fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-8">
+      <div className="bg-gray-800 p-10 rounded-lg shadow-lg w-[350px] h-[400px] flex flex-col justify-center">
         <div className="flex justify-between items-center border-b border-b-gray-400 pb-4">
           <h2 className="text-2xl font-semibold text-white">Sign Up</h2>
-          <Button variant="icon" icon="close" type="button" onClick={closeModal} ariaLabel="Close modal" />
+          <Button variant="icon" icon="close" type="button" onClick={handleModal} ariaLabel="Close modal" />
         </div>
 
         <form className="mt-4 space-y-4">
@@ -42,7 +41,7 @@ export default function SignUpForm() {
           </div>
 
           <div className="flex justify-center">
-            <Button text="Login" type="submit" />
+            <Button text="Register" type="submit" variant="large" />
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import logo from '../../assets/logo.webp';
 import Button from '../Atoms/Button';
 import { Link, useLocation } from 'react-router';
-import { useMediaQuery } from '../../hooks/useMediaQuery';
+import useMediaQuery from '../../hooks/useMediaQuery';
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

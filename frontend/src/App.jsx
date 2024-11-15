@@ -1,12 +1,13 @@
 import React from 'react';
 import { Route, Routes, useLocation } from 'react-router';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 import LayoutTemplate from './Components/Templates/LayoutTemplate';
 import HomePage from './Components/Page/HomePage';
 import FeaturesModal from './Components/Organisms/Features';
 import LoginForm from './Components/Organisms/LoginForm';
 import SignUpForm from './Components/Organisms/SignUpForm';
+import DashboardPage from './Components/Page/DashboardPage';
 
 function App() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginForm />} />
           <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
         </Routes>
 
         {location.pathname === '/features' && <FeaturesModal />}

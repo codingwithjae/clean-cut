@@ -1,38 +1,48 @@
-import React from 'react';
-import { AiOutlineClose } from 'react-icons/ai';
-import { FaBars, FaTimes } from 'react-icons/fa';
+import Icon from './Icon';
 
-export default function Button({ text, type, variant, icon, onClick, ariaLabel, isMenuOpen }) {
-  const stylesVariants = {
-    large: 'w-[195px] h-[60px]',
+export default function Button({ text, type, variant, icon, onClick, ariaLabel, isMenuOpen, className = '' }) {
+  const baseStyles = `
+    flex items-center justify-center
+    text-lg font-normal
+    text-white
+    bg-cerulean-blue-800
+    opacity-100
+    border-none rounded-lg
+    hover:opacity-90
+    cursor-pointer
+   
+  `;
+
+  const iconButtonStyles = `
+    p-1 
+    bg-transparent 
+    rounded-full
+    cursor-pointer
+  `;
+
+  const sizeVariants = {
     small: 'w-[142px] h-[60px]',
-    icon: 'w-[22px] h[22px] bg-transparent '
+    normal: 'w-[195px] h-[60px]',
+    large: 'w-[325px] md:w-[325px] h-[60px]',
+    icon: 'w-10 h-10 bg-transparent',
+    iconButton: iconButtonStyles
   };
 
-  let iconVariants = null;
-  if (icon === 'close') {
-    iconVariants = AiOutlineClose;
-  } else if (icon === 'menu') {
-    iconVariants = isMenuOpen ? FaTimes : FaBars;
-  }
+  const iconHoverClass = variant === 'iconButton' ? 'hover:text-blue-400 transition-colors' : '';
 
   return (
     <button
       type={type}
       onClick={onClick}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel || (icon && !text ? `${icon} button` : text)}
       className={`
-        flex items-center justify-center
-        text-lg font-normal text-white
-        bg-cerulean-blue-800 opacity-100
-        border-none rounded-lg
-        hover:opacity-90
-        cursor-pointer
-        ${stylesVariants[variant] || stylesVariants.large} 
-        ${variant === 'menu' ? (isMenuOpen ? 'rotate-90 ' : 'rotate-0') : ''}
+        ${variant === 'iconButton' ? iconButtonStyles : baseStyles}
+        ${variant !== 'iconButton' ? sizeVariants[variant] || sizeVariants.normal : ''}
+        ${variant === 'menu' ? (isMenuOpen ? 'rotate-90' : 'rotate-0') : ''}
+        ${className}
       `}
     >
-      {iconVariants && React.createElement(iconVariants, { size: 22 })}
+      {icon && <Icon name={icon} isMenuOpen={isMenuOpen} size={variant === 'iconButton' ? 16 : 24} className={iconHoverClass} />}
       {text}
     </button>
   );

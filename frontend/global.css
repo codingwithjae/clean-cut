@@ -2,10 +2,12 @@
 
 body {
   margin: 0px;
+  color: white;
+  font-family: var(--font-sans);
 }
 
 @theme {
-  /* 🎨 Colors */
+
 
   --color-cerulean-blue-800: #0a42c3;
   --color-pickled-bluewood-950: #202531;
