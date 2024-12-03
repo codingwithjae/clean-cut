@@ -1,11 +1,11 @@
-import { useNavigate } from 'react-router';
+import { useNavigate } from 'react-router'
 
 export default function useCloseModal() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleClick = () => {
-    navigate(-1);
-  };
+    navigate(-1)
+  }
 
-  return handleClick;
+  return handleClick
 }

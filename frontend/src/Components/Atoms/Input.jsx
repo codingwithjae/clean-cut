@@ -1,16 +1,16 @@
-export default function Input({ type = 'text', placeholder, value, onChange, name, required = false }) {
+export default function Input({ placeholder, value, onChange, required, name, type = 'text' }) {
   return (
     <input
       type={type}
+      name={name}
       placeholder={placeholder}
       value={value}
       onChange={onChange}
-      name={name}
       required={required}
       className={`
-        w-[325px] md:w-[365px] max-w-lg h-[60px] 
-        px-4 py-3
-        text-black text-left
+        w-3xs md:w-sm h-[60px] 
+        px-6 py-3
+        text-white
         bg-transparent
         border-2 border-gray-700
         rounded-lg
@@ -19,5 +19,5 @@ export default function Input({ type = 'text', placeholder, value, onChange, nam
         focus:border-cerulean-blue-800
       `}
     />
-  );
+  )
 }

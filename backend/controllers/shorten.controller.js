@@ -9,16 +9,14 @@ async function privateUrlGenerator(req, res) {
 
   try {
     await saveUrl(originalUrl, shortId, userId);
+    // Obtener el objeto completo del link recién creado
+    const newLink = await getUrl(shortId);
 
-    res.status(201).json({
-      message: 'URL shortened successfully',
-      shortUrl: `http://localhost:4000/${shortId}`
-    });
+    res.status(201).json(newLink);
 
     console.log(`URL shortened with id ${shortId} and stored in the database`);
   } catch (error) {
     console.error('Error in generating the short URL', error);
-
     res.status(500).json({
       message: 'Internal server error, error in generating the short URL'
     });
@@ -77,16 +75,13 @@ async function updateUrlId(req, res) {
   const { shortId } = req.params;
   const { newShortId } = req.body;
 
-  console.log(`Changing shortId from ${shortId} to ${newShortId}`);
-
   try {
     const result = await updateShortId(shortId, newShortId);
 
     if (result) {
-      res.status(200).json({
-        message: 'shortId updated successfully in the Database',
-        shortUrl: `http://localhost:4000/${newShortId}`
-      });
+      // Obtener el link actualizado de la base de datos
+      const updatedLink = await getUrl(newShortId); // Asegúrate que getUrl retorne todos los campos
+      res.status(200).json(updatedLink);
     } else {
       res.status(404).json({ message: 'URL not found or no changes were made' });
     }
@@ -99,7 +94,7 @@ async function updateUrlId(req, res) {
 }
 
 async function deleteShortenedUrl(req, res) {
-  const { shortId } = req.body;
+  const { shortId } = req.params;
 
   console.log(`Deleting the URL with id: ${shortId}`);
 

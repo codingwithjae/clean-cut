@@ -1,38 +1,46 @@
-import Icon from './Icon';
+import Icon from './Icon'
 
-export default function Button({ text, type, variant, icon, onClick, ariaLabel, isMenuOpen, className = '' }) {
+export default function Button({
+  text,
+  type,
+  variant,
+  icon,
+  onClick,
+  ariaLabel,
+  isMenuOpen,
+  className = '',
+}) {
   const baseStyles = `
     flex items-center justify-center
-    text-lg font-normal
+    text-lg
     text-white
     bg-cerulean-blue-800
-    opacity-100
-    border-none rounded-lg
+    rounded-lg
     hover:opacity-90
     cursor-pointer
-   
-  `;
+    transition-colors
+  `
 
   const iconButtonStyles = `
     p-1 
     bg-transparent 
     rounded-full
     cursor-pointer
-  `;
+  `
 
   const sizeVariants = {
     small: 'w-[142px] h-[60px]',
-    normal: 'w-[195px] h-[60px]',
-    large: 'w-[325px] md:w-[325px] h-[60px]',
+    normal: 'w-3xs md:w-[195px] h-[60px]',
+    large: 'w-[325px] h-[60px]',
     icon: 'w-10 h-10 bg-transparent',
-    iconButton: iconButtonStyles
-  };
+    iconButton: iconButtonStyles,
+  }
 
-  const iconHoverClass = variant === 'iconButton' ? 'hover:text-blue-400 transition-colors' : '';
+  const iconHoverClass = variant === 'iconButton' ? 'hover:text-blue-400 transition-colors' : ''
 
   return (
     <button
-      type={type}
+      type={type || 'button'}
       onClick={onClick}
       aria-label={ariaLabel || (icon && !text ? `${icon} button` : text)}
       className={`
@@ -42,8 +50,15 @@ export default function Button({ text, type, variant, icon, onClick, ariaLabel, 
         ${className}
       `}
     >
-      {icon && <Icon name={icon} isMenuOpen={isMenuOpen} size={variant === 'iconButton' ? 16 : 24} className={iconHoverClass} />}
+      {icon && (
+        <Icon
+          name={icon}
+          isMenuOpen={isMenuOpen}
+          size={variant === 'iconButton' ? 16 : 24}
+          className={iconHoverClass}
+        />
+      )}
       {text}
     </button>
-  );
+  )
 }

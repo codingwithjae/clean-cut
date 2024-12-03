@@ -1,9 +1,12 @@
-import requests from './http.api';
+import requests from './http.api'
 
-const authService = {
+const AuthService = {
   Login(body) {
-    return requests.post('/api/v1/login', body);
-  }
-};
+    return requests.post('/api/v1/login', body)
+  },
+  Register(body) {
+    return requests.post('/api/v1/register', body)
+  },
+}
 
-export default authService;
+export default AuthService

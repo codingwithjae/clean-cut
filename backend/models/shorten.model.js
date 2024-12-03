@@ -6,7 +6,7 @@ function saveUrl(originalUrl, shortId, userId) {
 }
 
 function getUrl(shortId) {
-  const gettingUrl = db.prepare('SELECT originalUrl FROM urls WHERE shortId = ?');
+  const gettingUrl = db.prepare('SELECT * FROM urls WHERE shortId = ?');
   return gettingUrl.get(shortId);
 }
 

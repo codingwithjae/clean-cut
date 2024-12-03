@@ -32,6 +32,9 @@ function routerApi(app) {
 
   // General route for redirection
   router.get('/:shortId', redirectUrl);
+
+  // General route for redirection (root level, outside /api/v1)
+  app.get('/:shortId', redirectUrl);
 }
 
 module.exports = routerApi;
