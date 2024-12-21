@@ -21,66 +21,40 @@ export default function useForms() {
   const handleLogin = async e => {
     e.preventDefault()
 
-    const emailValidation = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    if (!email || !password) {
-      toast.error('You must enter an email and a password')
-      return false
-    }
-
-    if (!emailValidation.test(email)) {
-      toast.error('Please, enter a valid email')
-      return false
-    }
-    if (password.length < 8) {
-      toast.error('Password must be at least 8 characters long')
-      return false
-    }
-
     try {
       const response = await AuthService.Login({ email, password })
       const token = response?.data?.accessToken
 
       if (response.status === 200) {
-        // Usar el método login del contexto en lugar de establecer el token manualmente
         login(token)
+        toast.success(response.data.message)
         setTimeout(() => {
           navigate('/dashboard')
         }, 2000)
       }
     } catch (error) {
       console.error(error)
-      toast.error('You must register first')
+      const errorMessage = error.response?.data?.message || 'An error occurred during login'
+      toast.error(errorMessage)
     }
   }
 
   const handleRegistration = async e => {
     e.preventDefault()
 
-    if (!email || !password) {
-      toast.error('You must enter an email and a password')
-      return false
-    }
-
     try {
       const response = await AuthService.Register({ email, password })
 
       if (response.status === 201) {
-        toast.success('Registration successful, now you can login.')
+        toast.success(response.data.message)
         setTimeout(() => {
-          navigate('/login')
+          navigate('/')
         }, 2000)
       }
     } catch (error) {
       console.error(error)
-      toast.error('Error in the registration process')
-      if (error.response.status === 409) {
-        toast.error('Email already exists')
-      } else if (error.response.status === 422) {
-        toast.error('Invalid email format')
-      } else {
-        toast.error('Registration failed')
-      }
+      const errorMessage = error.response?.data?.message || 'An error occurred during registration'
+      toast.error(errorMessage)
       setEmail('')
       setPassword('')
       return false

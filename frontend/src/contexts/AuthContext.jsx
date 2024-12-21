@@ -1,3 +1,6 @@
+/* This code snippet is setting up an authentication context in a React application. Here's a breakdown
+of what it does: */
+
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
@@ -24,17 +27,15 @@ export const AuthProvider = ({ children }) => {
   const login = token => {
     localStorage.setItem('token', token)
     setIsAuthenticated(true)
-    toast.success('¡Sesión iniciada correctamente!')
+    navigate('/dashboard')
   }
 
   const logout = () => {
     localStorage.removeItem('token')
     setIsAuthenticated(false)
-    navigate('/')
+    navigate('/', { replace: true, state: undefined })
     toast.info('Sesión cerrada')
   }
-
-  // Elimina la función ShortenForm de aquí, no debe estar en el contexto
 
   const value = {
     isAuthenticated,

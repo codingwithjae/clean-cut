@@ -1,4 +1,3 @@
-import React from 'react'
 import Navbar from '../Organisms/Navbar'
 
 export default function LayoutTemplate({ children }) {
@@ -8,7 +7,7 @@ export default function LayoutTemplate({ children }) {
         <Navbar />
       </header>
 
-      <main className='max-w-7xl mt-20 mb-20 md:mt-30 md:mb-30 lg:mt-40 lg:mb-40 items-center justify-center mx-auto'>
+      <main className='max-w-7xl mt-10 mb-10 md:mt-30 md:mb-30 lg:mt-20 lg:mb-20 items-center justify-center mx-auto'>
         {children}
       </main>
     </>

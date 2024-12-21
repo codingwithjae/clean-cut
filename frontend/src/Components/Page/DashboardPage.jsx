@@ -1,9 +1,8 @@
-import React from 'react'
 import Dashboard from '../Organisms/Dashboard'
 import EditLinkModal from '../Molecules/EditLinkModal'
 import DashboardModal from '../Molecules/DashboardModal'
 import useDashboardLinks from '../../hooks/useDashboardLinks'
-import useCopyShortUrlToClipboard from '../../hooks/useCopyShortUrlToClipboard'
+import useCopyToClipboard from '../../hooks/useCopyToClipboard'
 
 export default function DashboardPage() {
   const {
@@ -21,7 +20,7 @@ export default function DashboardPage() {
     openShortenForm,
     addNewLink,
   } = useDashboardLinks()
-  const copyToClipboard = useCopyShortUrlToClipboard()
+  const copyToClipboard = useCopyToClipboard()
 
   return (
     <>
@@ -29,16 +28,17 @@ export default function DashboardPage() {
         links={links}
         onDelete={handleDelete}
         onEdit={handleEditLink}
-        onCopy={copyToClipboard}
+        onCopy={shortId => copyToClipboard(`http://localhost:4000/${shortId}`)}
         onAddNew={openShortenForm}
       />
 
       {isShortenFormOpen && (
-        <DashboardModal onClose={() => setIsShortenFormOpen(false)} onCreateLink={addNewLink} />
+        <DashboardModal isOpen={isShortenFormOpen} onClose={() => setIsShortenFormOpen(false)} onCreateLink={addNewLink} />
       )}
 
       {isEditDialogOpen && (
         <EditLinkModal
+          isOpen={isEditDialogOpen}
           link={editingLink}
           shortId={newShortId}
           onClose={() => setIsEditDialogOpen(false)}

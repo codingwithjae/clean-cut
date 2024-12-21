@@ -12,10 +12,12 @@ export default function useDashboardLinks() {
 
   const handleDelete = async shortId => {
     try {
-      await linkService.deleteLink(shortId)
+      const response = await linkService.deleteLink(shortId)
       deleteLink(shortId)
-    } catch {
-      toast.error('There was an error deleting your link')
+      toast.success(response.data.message || 'Link deleted successfully')
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || 'There was an error deleting your link'
+      toast.error(errorMessage)
     }
   }
 
@@ -30,8 +32,10 @@ export default function useDashboardLinks() {
       const response = await linkService.updateLink(editingLink.shortId, newShortId)
       updateLink(editingLink.id, response.data)
       setIsEditDialogOpen(false)
+      toast.success(response.data.message || 'Link updated successfully')
     } catch (error) {
-      toast.error('Failed to update link')
+      const errorMessage = error.response?.data?.message || 'Failed to update link'
+      toast.error(errorMessage)
     }
   }
 

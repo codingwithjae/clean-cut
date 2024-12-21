@@ -12,6 +12,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { LinksProvider } from './contexts/LinksContext'
 import '/global.css'
 import 'react-toastify/dist/ReactToastify.css'
+import NotFoundPage from './Components/Page/NotFoundPage'
 
 function App() {
   const location = useLocation()
@@ -25,16 +26,19 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<LoginForm />} />
             <Route path='/signup' element={<SignUpForm />} />
-            <Route path='/feature' element={<SignUpForm />} />
+            <Route path='/features' element={<HomePage />} />
 
             <Route path='/dashboard' element={<PrivateRoute />}>
               <Route index element={<DashboardPage />} />
             </Route>
+
+            {/* Ruta 404 */}
+            <Route path='*' element={<NotFoundPage />} />
           </Routes>
 
-          {location.pathname === '/features' && <FeaturesModal />}
-          {location.pathname === '/login' && <LoginForm />}
-          {location.pathname === '/signup' && <SignUpForm />}
+          {state?.backgroundLocation && location.pathname === '/features' && <FeaturesModal />}
+          {state?.backgroundLocation && location.pathname === '/login' && <LoginForm />}
+          {state?.backgroundLocation && location.pathname === '/signup' && <SignUpForm />}
         </LayoutTemplate>
         <ToastContainer />
       </LinksProvider>

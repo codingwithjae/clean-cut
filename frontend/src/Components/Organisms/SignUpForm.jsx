@@ -1,16 +1,27 @@
-import React from 'react'
 import Button from '../Atoms/Button'
-import useCloseModal from '../../hooks/useCloseModal'
+import useModals from '../../hooks/useModals'
 import useForms from '../../hooks/useForms'
 
 export default function SignUpForm() {
-  const closeModal = useCloseModal()
+  const { isVisible, isAnimating, closeModal } = useModals()
   const { email, password, handleEmailChange, handlePasswordChange, handleRegistration } =
     useForms()
 
+  if (!isVisible) return null
+
   return (
-    <section className='fixed inset-0 bg-black/55 flex items-center justify-center z-50 p-8'>
-      <div className='bg-gray-800 p-10 rounded-lg shadow-lg w-[350px] h-[420px] flex flex-col justify-center'>
+    <section
+      role='dialog'
+      aria-modal='true'
+      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/55 transition-opacity duration-300 ease-in-out ${
+        isAnimating ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div
+        className={`bg-gray-800 p-10 rounded-lg shadow-lg w-[350px] h-[420px] flex flex-col justify-center transform transition-all duration-300 ease-in-out ${
+          isAnimating ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'
+        }`}
+      >
         <div className='flex justify-between items-center border-b border-b-gray-400 pb-4'>
           <h2 className='text-2xl font-semibold text-white'>Sign Up</h2>
           <Button

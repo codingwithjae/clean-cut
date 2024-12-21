@@ -2,13 +2,11 @@ import React, { useState } from 'react'
 import logo from '../../assets/logo.webp'
 import Button from '../Atoms/Button'
 import { Link, useLocation } from 'react-router-dom'
-import useMediaQuery from '../../hooks/useMediaQuery'
 import { useAuth } from '../../contexts/AuthContext'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isAuthenticated, logout } = useAuth()
-  const isMobile = useMediaQuery('(max-width: 767px)')
   const location = useLocation()
 
   const toggleMenu = () => {
@@ -32,58 +30,42 @@ export default function Navbar() {
           </Link>
         </figure>
 
-        {isMobile && (
-          <Button
-            variant='icon'
-            icon='menu'
-            onClick={toggleMenu}
-            ariaLabel='Toggle menu'
-            isMenuOpen={isMenuOpen}
-          />
-        )}
+        <Button
+          variant='icon'
+          icon='menu'
+          onClick={toggleMenu}
+          ariaLabel='Toggle menu'
+          isMenuOpen={isMenuOpen}
+          className='md:hidden'
+        />
 
         <div
-          className={`transition-all duration-500 ease-in-out transform ${
-            isMobile
-              ? isMenuOpen
-                ? 'absolute top-14 left-0 w-full flex-col p-6 bg-gray-800 shadow-md z-50 opacity-100 scale-100'
-                : 'absolute top-14 left-0 w-full flex-col p-6 bg-gray-800 shadow-md z-50 opacity-0 scale-95 pointer-events-none'
-              : 'md:flex opacity-100 scale-100'
-          } flex items-center gap-10`}
+          className={`flex items-center gap-10 transition-all duration-300 ease-in-out ${
+            isMenuOpen
+              ? 'absolute top-14 left-0 w-full flex-col p-6 bg-gray-800 shadow-md z-50 opacity-100 translate-y-0 md:relative md:top-0 md:left-0 md:w-auto md:flex-row md:bg-transparent md:shadow-none md:p-0 md:opacity-100 md:translate-y-0'
+              : 'absolute top-14 left-0 w-full flex-col p-6 bg-gray-800 shadow-md z-50 opacity-0 -translate-y-4 pointer-events-none md:relative md:top-0 md:left-0 md:w-auto md:flex-row md:bg-transparent md:shadow-none md:p-0 md:opacity-100 md:translate-y-0 md:pointer-events-auto'
+          }`}
         >
-          <ul className='flex items-center gap-6'>
-            {isAuthenticated ? (
-              <>
-                <li className='cursor-pointer hover:text-blue-500'>
-                  <Link to='/dashboard'>
-                    Dashboard
-                  </Link>
-                </li>
-                <li className='cursor-pointer hover:text-blue-500'>
-                  <Link to='/features'>
-                    Features
-                  </Link>
-                </li>
-              </>
-            ) : (
+          <ul className='flex flex-col md:flex-row items-center gap-10'>
+            <li className='cursor-pointer hover:text-blue-500'>
+              <Link to='/features' state={{ backgroundLocation: location }}>Features</Link>
+            </li>
+            {isAuthenticated && (
               <li className='cursor-pointer hover:text-blue-500'>
-                <Link to='/features'>
-                  Features
-                </Link>
+                <Link to='/dashboard'>Dashboard</Link>
               </li>
             )}
           </ul>
 
-          {/* Condicionalmente mostrar botones de login/signup o logout */}
           {isAuthenticated ? (
-            <Button text='Logout' variant={isMobile ? undefined : 'small'} onClick={handleLogout} />
+            <Button text='Logout' variant='small' onClick={handleLogout} />
           ) : (
             <>
               <Link to='/login' state={{ backgroundLocation: location }}>
-                <Button text='Login' variant={isMobile ? undefined : 'small'} />
+                <Button text='Login' variant='small' />
               </Link>
               <Link to='/signup' state={{ backgroundLocation: location }}>
-                <Button text='Sign Up' variant={isMobile ? undefined : 'small'} />
+                <Button text='Sign Up' variant='small' />
               </Link>
             </>
           )}

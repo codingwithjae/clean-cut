@@ -12,11 +12,16 @@ async function registrationHandler(req, res) {
   try {
     await saveUserCredentials(email, passwordHash, apiKey);
     res.status(201).json({
-      message: 'User registered successfully',
-      apiKey: `your registration key is: ${apiKey}`
+      statusCode: 201,
+      message: 'Registration successful, now you can login',
+      apiKey: `Your registration key is: ${apiKey}`
     });
   } catch (error) {
-    res.status(500).json({ error: 'Registration failed, please try again' });
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'Registration failed, please try again'
+    });
   }
 }
 
@@ -31,15 +36,24 @@ async function loginHandler(req, res) {
         username: credentials.username
       });
       res.status(200).json({
-        message: `Welcome ${email}, your log in was successful`,
+        statusCode: 200,
+        message: `Welcome ${email}, your login was successful`,
         accessToken: token
       });
     } else {
-      res.status(401).json({ message: 'Invalid credentials' });
+      res.status(401).json({
+        statusCode: 401,
+        error: 'Unauthorized',
+        message: 'Invalid credentials'
+      });
     }
   } catch (error) {
     console.error('Error during login:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({
+      statusCode: 500,
+      error: 'Internal Server Error',
+      message: 'An error occurred during login'
+    });
   }
 }
 

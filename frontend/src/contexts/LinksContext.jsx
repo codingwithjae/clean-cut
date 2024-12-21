@@ -21,7 +21,8 @@ export function LinksProvider({ children }) {
         const response = await linkService.getMyLinks()
         setLinks(response.data)
       } catch (error) {
-        toast.error('Failed to fetch links')
+        const errorMessage = error.response?.data?.message || 'Failed to fetch links'
+        toast.error(errorMessage)
       }
     }
     fetchLinks()
@@ -29,17 +30,14 @@ export function LinksProvider({ children }) {
 
   const addLink = useCallback(linkObj => {
     setLinks(prev => [...prev, linkObj])
-    toast.success('Link generated successfully')
   }, [])
 
   const updateLink = useCallback((id, updatedLink) => {
     setLinks(prev => prev.map(link => (link.id === id ? updatedLink : link)))
-    toast.success('Link updated successfully')
   }, [])
 
   const deleteLink = useCallback(shortId => {
     setLinks(prev => prev.filter(link => link.shortId !== shortId))
-    toast.success('Link deleted successfully')
   }, [])
 
   const value = {

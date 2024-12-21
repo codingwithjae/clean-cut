@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { toast } from 'react-toastify'
 
 const requests = axios.create({
   baseURL: 'http://localhost:4000',
@@ -16,5 +17,18 @@ requests.interceptors.request.use(config => {
   }
   return config
 })
+
+// Interceptor para manejar expiración de sesión
+requests.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem('token')
+      toast.error('Tu sesión expiró, por favor inicia sesión de nuevo')
+      window.location.href = '/login'
+    }
+    return Promise.reject(error)
+  }
+)
 
 export default requests

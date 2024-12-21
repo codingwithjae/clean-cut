@@ -1,4 +1,3 @@
-import React from 'react'
 import HeroSection from '../Organisms/HeroSection'
 import ShortenForm from '../Molecules/ShortenForm'
 import { useLinks } from '../../contexts/LinksContext'
