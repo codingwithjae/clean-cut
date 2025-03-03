@@ -29,10 +29,10 @@ async function publicUrlGenerator(req, res, next) {
 
   try {
     await saveUrl(originalUrl, shortId, null);
-
+    const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
     res.status(201).json({
       message: 'URL shortened successfully',
-      shortUrl: `http://localhost:4000/${shortId}`
+      shortUrl: `${baseUrl}/${shortId}`
     });
 
     console.log(`URL shortened with id ${shortId} and stored in the database`);
