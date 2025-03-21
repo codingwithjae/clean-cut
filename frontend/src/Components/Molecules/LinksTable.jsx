@@ -17,7 +17,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
 
   return (
     <section aria-label='Links table' className='w-full'>
-      {/* Vista de escritorio - Tabla */}
+      {/* Desktop view */}
       <div className='hidden md:block border border-gray-600 overflow-x-auto rounded-md'>
         <table className='min-w-full divide-y divide-gray-200'>
           <thead className='bg-gray-800'>
@@ -58,7 +58,11 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                     rel='noopener noreferrer'
                     className='flex items-center gap-1 text-blue-400 hover:underline'
                   >
-                    <span className='truncate'>{link.originalUrl}</span>
+                    <span className='truncate'>
+                      {link.originalUrl.length > 30 
+                        ? link.originalUrl.slice(0, 50) + '...' 
+                        : link.originalUrl}
+                    </span>
                     <Button
                       variant='iconButton'
                       icon='link'
@@ -101,7 +105,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
         </table>
       </div>
 
-      {/* Vista móvil - Cards */}
+      {/* Mobile view */}
       <div className='md:hidden space-y-4'>
         {links.map(link => (
           <div
@@ -117,7 +121,11 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                   rel='noopener noreferrer'
                   className='flex-1 flex items-center gap-1 text-blue-400 hover:underline text-sm truncate'
                 >
-                  <span className='truncate'>{link.originalUrl}</span>
+                  <span className='truncate'>
+                    {link.originalUrl.length > 30 
+                      ? link.originalUrl.slice(0, 30) + '...' 
+                      : link.originalUrl}
+                  </span>
                   <Button
                     variant='iconButton'
                     icon='link'
@@ -127,7 +135,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                 </a>
               </div>
 
-              {/* Short ID y Clicks */}
+              {/* Short ID and clicks */}
               <div className='flex items-center justify-between'>
                 <div className='flex items-center gap-2'>
                   <span className='text-xs text-gray-300 uppercase'>Short ID:</span>
@@ -147,7 +155,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                 </div>
               </div>
 
-              {/* Acciones */}
+              {/* Actions */}
               <div className='flex justify-end items-center gap-2 border-t border-gray-700 pt-3'>
                 <Button
                   variant='iconButton'

@@ -1,6 +1,3 @@
-/* This code snippet is setting up an authentication context in a React application. Here's a breakdown
-of what it does: */
-
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
@@ -33,7 +30,6 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token')
     setIsAuthenticated(false)
-    navigate('/', { replace: true, state: undefined })
     toast.info('Sesión cerrada')
   }
 

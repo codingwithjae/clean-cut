@@ -1,5 +1,6 @@
 import Button from '../Atoms/Button'
 import useDashboardModalAnimation from '../../hooks/useDashboardModalAnimation'
+import Input from '../Atoms/Input'
 
 export default function EditLinkModal({ shortId, onClose, onSave, onShortIdChange, isOpen }) {
   const { isVisible, isAnimating, handleClose } = useDashboardModalAnimation(isOpen, onClose)
@@ -22,10 +23,9 @@ export default function EditLinkModal({ shortId, onClose, onSave, onShortIdChang
             <label htmlFor='short-id' className='block text-sm font-medium text-white mb-1'>
               Short ID
             </label>
-            <input
+            <Input
               id='short-id'
               type='text'
-              className='w-full px-3 py-2 border border-gray-600 rounded-md text-sm text-white'
               value={shortId}
               onChange={e => onShortIdChange(e.target.value)}
               placeholder='Enter custom short ID'

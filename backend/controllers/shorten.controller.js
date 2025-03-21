@@ -1,4 +1,4 @@
-const { saveUrl, getUrl, deleteUrl, updateShortId, incrementClicks } = require('../models/shorten.model.js');
+const { saveUrl, getUrl, deleteUrl, updateShortId, incrementClicks, checkingId } = require('../models/shorten.model.js');
 const { getUrlsByUserId } = require('../models/user.model.js');
 const { v4: uuidv4 } = require('uuid');
 const boom = require('@hapi/boom');
@@ -6,7 +6,14 @@ const boom = require('@hapi/boom');
 async function privateUrlGenerator(req, res, next) {
   const { originalUrl } = req.body;
   const userId = req.user.id;
-  const shortId = uuidv4().slice(0, 5);
+  let shortId = req.body.shortId || uuidv4().slice(0, 5);
+
+  if (req.body.shortId) {
+    const shortIdExists = checkingId(shortId);
+    if (shortIdExists) {
+      return next(boom.conflict('This short ID is already in use, please choose another one'));
+    }
+  }
 
   try {
     await saveUrl(originalUrl, shortId, userId);
@@ -25,14 +32,22 @@ async function privateUrlGenerator(req, res, next) {
 
 async function publicUrlGenerator(req, res, next) {
   const { originalUrl } = req.body;
-  const shortId = uuidv4().slice(0, 5);
+  let shortId = req.body.shortId || uuidv4().slice(0, 5);
+
+  if (req.body.shortId) {
+    const shortIdExists = checkingId(shortId);
+    if (shortIdExists) {
+      return next(boom.conflict('This short ID is already in use, please choose another one'));
+    }
+  }
 
   try {
     await saveUrl(originalUrl, shortId, null);
-    const baseUrl = process.env.BASE_URL || 'http://localhost:4000';
+
     res.status(201).json({
       message: 'URL shortened successfully',
-      shortUrl: `${baseUrl}/${shortId}`
+      shortUrl: `http://localhost:4000/${shortId}`,
+      shortId
     });
 
     console.log(`URL shortened with id ${shortId} and stored in the database`);

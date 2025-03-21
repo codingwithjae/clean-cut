@@ -1,48 +1,40 @@
 const jwt = require('jsonwebtoken')
 const { authSchema } = require('../schemas/joi.schemas')
 const { checkingUsername } = require('../models/user.model.js')
+const boom = require('@hapi/boom')
 
 const loginValidation = (req, res, next) => {
-  const { error } = authSchema.validate(req.body, { abortEarly: false })
+  const { error } = authSchema.validate(req.body, { abortEarly: true })
+
   if (error) {
     const errorMessage = error.details.map(detail => detail.message).join(', ')
-    return res.status(400).json({
-      statusCode: 400,
-      error: 'Bad Request',
-      message: errorMessage
-    })
+    next(boom.badRequest(errorMessage))
+    return
   }
 
   const userExist = checkingUsername(req.body.email)
+
   if (!userExist) {
-    return res.status(401).json({
-      statusCode: 401,
-      error: 'Unauthorized',
-      message: 'Email does not exist, you must register first'
-    })
+    next(boom.unauthorized('Email does not exist, must register first'))
+    return
   }
 
   next()
 }
 
 const registrationValidation = (req, res, next) => {
-  const { error } = authSchema.validate(req.body, { abortEarly: false })
+  const { error } = authSchema.validate(req.body, { abortEarly: true })
+
   if (error) {
     const errorMessage = error.details.map(detail => detail.message).join(', ')
-    return res.status(400).json({
-      statusCode: 400,
-      error: 'Bad Request',
-      message: errorMessage
-    })
+    next(boom.badRequest(errorMessage))
+    return
   }
 
   const userExist = checkingUsername(req.body.email)
   if (userExist) {
-    return res.status(409).json({
-      statusCode: 409,
-      error: 'Conflict',
-      message: 'Email already exists'
-    })
+    next(boom.conflict('Email already in use'))
+    return
   }
 
   next()
@@ -52,11 +44,8 @@ const jwtHandler = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1]
 
   if (!token) {
-    return res.status(401).json({
-      statusCode: 401,
-      error: 'Unauthorized',
-      message: 'No token provided'
-    })
+    next(boom.unauthorized('No token provided'))
+    return
   }
 
   try {
@@ -64,11 +53,8 @@ const jwtHandler = (req, res, next) => {
     req.user = decoded
     next()
   } catch (error) {
-    return res.status(401).json({
-      statusCode: 401,
-      error: 'Unauthorized',
-      message: 'Invalid token'
-    })
+    next(boom.unauthorized('Invalid or expired token'))
+    return
   }
 }
 

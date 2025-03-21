@@ -13,7 +13,6 @@ function routerApi(app) {
   app.use('/api/v1', router);
 
   // General routes
-
   router.get('/my-links', jwtHandler, getUserLinks);
   router.patch('/update/:shortId', jwtHandler, userIdValidator, validateShortIdUpdate, updateUrlId);
   router.delete('/delete/:shortId', jwtHandler, shortIdValidator, userIdValidator, deleteShortenedUrl);
@@ -32,8 +31,6 @@ function routerApi(app) {
 
   // General route for redirection
   router.get('/:shortId', redirectUrl);
-
-  // General route for redirection (root level, outside /api/v1)
   app.get('/:shortId', redirectUrl);
 }
 

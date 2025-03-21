@@ -14,21 +14,23 @@ const shortIdSchema = Joi.object({
 })
 
 const updateShortIdSchema = Joi.object({
-  newShortId: Joi.string().required().messages({
+  newShortId: Joi.string().min(1).max(5).required().messages({
+    'string.min': 'New Short ID is required',
+    'string.max': 'New Short ID must not exceed 5 characters',
     'any.required': 'New Short ID is required'
   })
 })
 
 const authSchema = Joi.object({
   email: Joi.string().email().required().messages({
-    'string.email': 'Please enter a valid email address',
-    'string.empty': 'Email is required',
-    'any.required': 'Email is required'
+    'string.email': 'Invalid email format. Please enter a valid email address',
+    'string.empty': 'Email field cannot be empty',
+    'any.required': 'Email field is required'
   }),
   password: Joi.string().min(8).required().messages({
     'string.min': 'Password must be at least 8 characters long',
-    'string.empty': 'Password is required',
-    'any.required': 'Password is required'
+    'string.empty': 'Password field cannot be empty',
+    'any.required': 'Password field is required'
   })
 })
 
