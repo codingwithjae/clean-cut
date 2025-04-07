@@ -1,9 +1,9 @@
 import Button from '../Atoms/Button'
-import useModals from '../../hooks/useModals'
+import { useModal } from '../../hooks/useModal'
 import useForms from '../../hooks/useForms'
 
 export default function SignUpForm() {
-  const { isVisible, isAnimating, closeModal } = useModals()
+  const { handleClose, isVisible, isAnimating } = useModal()
   const { email, password, handleEmailChange, handlePasswordChange, handleRegistration } =
     useForms()
 
@@ -28,7 +28,7 @@ export default function SignUpForm() {
             variant='icon'
             icon='close'
             type='button'
-            onClick={closeModal}
+            onClick={handleClose}
             ariaLabel='Close modal'
           />
         </div>

@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { toast } from 'react-toastify'
-import { useNavigate } from 'react-router-dom'
 
 const AuthContext = createContext()
 
@@ -9,7 +8,6 @@ export const useAuth = () => useContext(AuthContext)
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const navigate = useNavigate()
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -24,13 +22,14 @@ export const AuthProvider = ({ children }) => {
   const login = token => {
     localStorage.setItem('token', token)
     setIsAuthenticated(true)
-    navigate('/dashboard')
+
   }
 
   const logout = () => {
     localStorage.removeItem('token')
     setIsAuthenticated(false)
-    toast.info('Sesión cerrada')
+    toast.info('Logged out')
+
   }
 
   const value = {

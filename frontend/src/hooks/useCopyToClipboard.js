@@ -1,10 +1,15 @@
 import { toast } from 'react-toastify'
 
 export default function useCopyToClipboard() {
-  return text => {
-    navigator.clipboard
-      .writeText(text)
-      .then(() => toast.success('Link copied to clipboard'))
-      .catch(() => toast.error('Failed to copy link'))
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.success('Copied to clipboard!')
+    } catch (err) {
+      toast.error('Failed to copy')
+      console.error('Failed to copy: ', err)
+    }
   }
-}
+
+  return copyToClipboard
+} 

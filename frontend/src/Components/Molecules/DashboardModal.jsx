@@ -1,13 +1,15 @@
 import Button from '../Atoms/Button'
 import ShortenForm from './ShortenForm'
-import useDashboardModalAnimation from '../../hooks/useDashboardModalAnimation'
+import { useDashboardModal } from '../../hooks/useModal'
+import { useLinks } from '../../contexts/LinksContext'
 
-export default function DashboardModal({ onClose, onCreateLink, isOpen }) {
-  const { isVisible, isAnimating, handleClose } = useDashboardModalAnimation(isOpen, onClose)
-
-  const handleSuccess = () => {
-    handleClose()
-  }
+export default function DashboardModal() {
+  const { isShortenFormOpen, setIsShortenFormOpen } = useLinks()
+  
+  const { isVisible, isAnimating, handleClose } = useDashboardModal(
+    isShortenFormOpen, 
+    () => setIsShortenFormOpen(false)
+  )
 
   if (!isVisible) return null
 
@@ -27,7 +29,7 @@ export default function DashboardModal({ onClose, onCreateLink, isOpen }) {
           <h3 id='modal-title' className='text-xl font-semibold text-white mb-6 text-center'>
             Create New Link
           </h3>
-          <ShortenForm onSuccess={handleSuccess} onCreateLink={onCreateLink} />
+          <ShortenForm onSuccess={handleClose} />
         </div>
       </article>
     </div>

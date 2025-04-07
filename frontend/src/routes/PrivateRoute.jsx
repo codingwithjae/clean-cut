@@ -5,14 +5,11 @@ import { useAuth } from '../contexts/AuthContext'
 const PrivateRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth()
 
-  // Si está cargando, podrías mostrar un spinner o similar
   if (isLoading) {
-    return <div>Cargando...</div>
+    return null
   }
 
-  // Si está autenticado, mostramos el contenido protegido
-  // Si no, redirigimos al login
-  return isAuthenticated ? <Outlet /> : <Navigate to='/login' />
+  return isAuthenticated ? <Outlet /> : <Navigate to='/' />
 }
 
 export default PrivateRoutes

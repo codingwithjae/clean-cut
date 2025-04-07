@@ -1,8 +1,8 @@
 import Button from '../Atoms/Button'
-import useModals from '../../hooks/useModals'
+import { useModal } from '../../hooks/useModal'
 
 export default function FeaturesModal() {
-  const { isVisible, isAnimating, closeModal } = useModals()
+  const { handleClose, isVisible, isAnimating } = useModal()
 
   if (!isVisible) return null
 
@@ -21,7 +21,7 @@ export default function FeaturesModal() {
       >
         <article className='flex justify-between items-center border-b border-gray-700 pb-4'>
           <h2 className='text-2xl font-semibold text-white'>Features</h2>
-          <Button variant='icon' icon='close' onClick={closeModal} ariaLabel='Close modal' />
+          <Button variant='icon' icon='close' onClick={handleClose} ariaLabel='Close modal' />
         </article>
 
         <article className='mt-4 text-gray-300'>
@@ -39,7 +39,7 @@ export default function FeaturesModal() {
         </article>
 
         <div className='mt-6 flex justify-center md:justify-end'>
-          <Button text='Get Started' onClick={closeModal} variant='normal' />
+          <Button text='Get Started' onClick={handleClose} variant='normal' />
         </div>
       </div>
     </section>

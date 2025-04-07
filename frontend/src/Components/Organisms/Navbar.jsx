@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import logo from '../../assets/logo.webp'
 import Button from '../Atoms/Button'
-import { Link, useLocation } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
+import { useModal } from '../../hooks/useModal'
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { isAuthenticated, logout } = useAuth()
-  const location = useLocation()
+  const { openModal } = useModal()
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -48,7 +49,7 @@ export default function Navbar() {
         >
           <ul className='flex flex-col md:flex-row items-center gap-10'>
             <li className='cursor-pointer hover:text-blue-500'>
-              <Link to='/features' state={{ backgroundLocation: location }}>Features</Link>
+              <a onClick={() => openModal('/features')} className="cursor-pointer">Features</a>
             </li>
             {isAuthenticated && (
               <li className='cursor-pointer hover:text-blue-500'>
@@ -61,12 +62,8 @@ export default function Navbar() {
             <Button text='Logout' variant='small' onClick={handleLogout} />
           ) : (
             <>
-              <Link to='/login' state={{ backgroundLocation: location }}>
-                <Button text='Login' variant='small' />
-              </Link>
-              <Link to='/signup' state={{ backgroundLocation: location }}>
-                <Button text='Sign Up' variant='small' />
-              </Link>
+              <Button text='Login' variant='small' onClick={() => openModal('/login')} />
+              <Button text='Sign Up' variant='small' onClick={() => openModal('/signup')} />
             </>
           )}
         </div>

@@ -1,9 +1,22 @@
 import Button from '../Atoms/Button'
-import useDashboardModalAnimation from '../../hooks/useDashboardModalAnimation'
+import { useDashboardModal } from '../../hooks/useModal'
 import Input from '../Atoms/Input'
+import { useLinks } from '../../contexts/LinksContext'
 
-export default function EditLinkModal({ shortId, onClose, onSave, onShortIdChange, isOpen }) {
-  const { isVisible, isAnimating, handleClose } = useDashboardModalAnimation(isOpen, onClose)
+export default function EditLinkModal() {
+  const { 
+    isEditDialogOpen, 
+    setIsEditDialogOpen, 
+    shortId: currentShortId, 
+    newShortId, 
+    setNewShortId, 
+    handleSaveEdit 
+  } = useLinks()
+  
+  const { isVisible, isAnimating, handleClose } = useDashboardModal(
+    isEditDialogOpen, 
+    () => setIsEditDialogOpen(false)
+  )
 
   if (!isVisible) return null
 
@@ -26,14 +39,14 @@ export default function EditLinkModal({ shortId, onClose, onSave, onShortIdChang
             <Input
               id='short-id'
               type='text'
-              value={shortId}
-              onChange={e => onShortIdChange(e.target.value)}
+              value={newShortId}
+              onChange={e => setNewShortId(e.target.value)}
               placeholder='Enter custom short ID'
               autoFocus
             />
           </div>
           <div className='flex justify-end mt-6'>
-            <Button text='Save Changes' onClick={() => onSave(shortId)} />
+            <Button text='Save Changes' onClick={() => handleSaveEdit(newShortId)} />
           </div>
         </div>
       </div>

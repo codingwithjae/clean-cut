@@ -1,0 +1,5 @@
+name = "link-shortener-worker" # El nombre de tu worker
+main = "index.js" # El punto de entrada principal, lo ajustaremos luego
+compatibility_date = "2024-07-25" # Usa una fecha reciente
+
+# Añadiremos más configuraciones aquí (KV, D1, variables, etc.) 

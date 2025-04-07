@@ -1,9 +1,9 @@
 import Button from '../Atoms/Button'
-import useModals from '../../hooks/useModals'
+import { useModal } from '../../hooks/useModal'
 import useForms from '../../hooks/useForms'
 
 export default function LoginForm() {
-  const { isVisible, isAnimating, closeModal } = useModals()
+  const { handleClose, isVisible, isAnimating } = useModal()
   const { email, password, handleEmailChange, handlePasswordChange, handleLogin } = useForms()
 
   if (!isVisible) return null
@@ -23,7 +23,7 @@ export default function LoginForm() {
       >
         <div className='flex justify-between items-center border-b border-gray-400 pb-2'>
           <h2 className='text-2xl font-semibold text-white'>Login</h2>
-          <Button variant='icon' icon='close' onClick={closeModal} ariaLabel='Close modal' />
+          <Button variant='icon' icon='close' onClick={handleClose} ariaLabel='Close modal' />
         </div>
 
         <form className='mt-4 space-y-4' onSubmit={handleLogin} noValidate>

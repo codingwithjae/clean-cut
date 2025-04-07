@@ -1,14 +1,24 @@
 import Input from '../Atoms/Input'
 import Button from '../Atoms/Button'
-import useCopyToClipboard from '../../hooks/useCopyToClipboard'
-import useShortenForm from '../../hooks/useShortenForm'
+import { useLinks } from '../../contexts/LinksContext'
 
-export default function ShortenForm({ onSuccess, onCreateLink }) {
-  const { url, shortened, setUrl, setShortened, handleSubmit } = useShortenForm({
-    onSuccess,
-    onCreateLink,
-  })
-  const copyToClipboard = useCopyToClipboard()
+export default function ShortenForm({ onSuccess }) {
+  const { 
+    url, 
+    setUrl, 
+    shortened, 
+    setShortened, 
+    shortenUrl, 
+    copyToClipboard 
+  } = useLinks()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const result = await shortenUrl(url)
+    if (result && onSuccess) {
+      onSuccess()
+    }
+  }
 
   return (
     <form className='w-full max-w-xl mx-auto px-4' onSubmit={handleSubmit} noValidate>

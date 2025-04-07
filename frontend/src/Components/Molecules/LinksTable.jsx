@@ -1,6 +1,9 @@
 import Button from '../Atoms/Button'
+import { useLinks } from '../../contexts/LinksContext'
 
-export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
+export default function LinksTable() {
+  const { links, handleEditLink, copyToClipboard, handleDelete } = useLinks()
+  
   if (!links || links.length === 0) {
     return (
       <section
@@ -77,7 +80,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                     <Button
                       variant='iconButton'
                       icon='copy'
-                      onClick={() => onCopy(link.shortId)}
+                      onClick={() => copyToClipboard(`http://localhost:4000/${link.shortId}`)}
                       ariaLabel='Copy link'
                     />
                   </div>
@@ -88,13 +91,13 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                     <Button
                       variant='iconButton'
                       icon='edit'
-                      onClick={() => onEdit(link)}
+                      onClick={() => handleEditLink(link)}
                       ariaLabel='Edit link'
                     />
                     <Button
                       variant='iconButton'
                       icon='trash'
-                      onClick={() => onDelete(link.shortId)}
+                      onClick={() => handleDelete(link.shortId)}
                       ariaLabel='Delete link'
                     />
                   </div>
@@ -144,7 +147,7 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                     <Button
                       variant='iconButton'
                       icon='copy'
-                      onClick={() => onCopy(link.shortId)}
+                      onClick={() => copyToClipboard(`http://localhost:4000/${link.shortId}`)}
                       ariaLabel='Copy link'
                     />
                   </div>
@@ -160,13 +163,13 @@ export default function LinksTable({ links, onEdit, onCopy, onDelete }) {
                 <Button
                   variant='iconButton'
                   icon='edit'
-                  onClick={() => onEdit(link)}
+                  onClick={() => handleEditLink(link)}
                   ariaLabel='Edit link'
                 />
                 <Button
                   variant='iconButton'
                   icon='trash'
-                  onClick={() => onDelete(link.shortId)}
+                  onClick={() => handleDelete(link.shortId)}
                   ariaLabel='Delete link'
                 />
               </div>
