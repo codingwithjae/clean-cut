@@ -1,5 +1,5 @@
 {
-  "name": "clean cut link Sshortener",
+  "name": "link-shortener",
   "private": true,
   "version": "1.0.0",
   "scripts": {
