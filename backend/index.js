@@ -7,7 +7,7 @@ const { notFound, errorHandler } = require('./middlewares/errors.handler.js');
 const cors = require('cors');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
@@ -21,6 +21,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+  console.log(`App listening on port ${port}`);
 });
 
