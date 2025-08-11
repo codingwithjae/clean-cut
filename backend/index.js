@@ -9,7 +9,10 @@ const cors = require('cors');
 const app = express();
 const port = 5000;
 
-app.use(cors());
+app.use(cors({
+  origin: [process.env.BASE_URL, 'http://localhost:5173'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(rateLimiter);
 app.use(requestLogger);
