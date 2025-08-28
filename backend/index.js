@@ -7,7 +7,8 @@ const { notFound, errorHandler } = require('./middlewares/errors.handler.js');
 const cors = require('cors');
 
 const app = express();
-const port = 5000;
+// Use the PORT environment variable provided by Railway or fallback to 5000 for local dev
+const port = process.env.PORT || 5000; 
 
 app.use(cors({
   origin: [process.env.BASE_URL, 'http://localhost:5173'],
@@ -24,6 +25,7 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log(`App listening at http://localhost:${port}`);
+  // Log the actual port the server is listening on
+  console.log(`App listening on port ${port}`);
 });
 
