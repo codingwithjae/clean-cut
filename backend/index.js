@@ -7,13 +7,15 @@ const { notFound, errorHandler } = require('./middlewares/errors.handler.js');
 const cors = require('cors');
 
 const app = express();
-// Use the PORT environment variable provided by Railway or fallback to 5000 for local dev
+
 const port = process.env.PORT || 5000; 
 
-app.use(cors({
-  origin: [process.env.BASE_URL, 'http://localhost:5173'],
-  credentials: true
-}));
+// Temporarily allow all origins for debugging CORS
+// app.use(cors({
+//   origin: [process.env.BASE_URL, 'http://localhost:5173'],
+//   credentials: true
+// }));
+app.use(cors()); // Allow all origins
 app.use(express.json());
 app.use(rateLimiter);
 app.use(requestLogger);
