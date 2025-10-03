@@ -47,7 +47,7 @@ async function publicUrlGenerator(req, res, next) {
 
     res.status(201).json({
       message: 'URL shortened successfully',
-      shortUrl: `${BASE_URL}/${shortId}` || `http://localhost:4000/${shortId}`,
+      shortUrl: `${BASE_URL}/${shortId}` || `http://localhost:5000/${shortId}`,
       shortId
     });
 

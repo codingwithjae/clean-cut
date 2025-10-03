@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import linkService from '../api/links.api'
 import { toast } from 'react-toastify'
 import { useAuth } from './AuthContext'
-import { useNavigate } from 'react-router-dom'
 import useCopyToClipboard from '../hooks/useCopyToClipboard'
 
 const LinksContext = createContext()
@@ -20,7 +19,6 @@ export function LinksProvider({ children }) {
   const [url, setUrl] = useState('')
   const [shortened, setShortened] = useState('')
   const { isAuthenticated } = useAuth()
-  const navigate = useNavigate()
   const copyToClipboard = useCopyToClipboard()
 
   // Fetch links on authentication change
@@ -101,12 +99,12 @@ export function LinksProvider({ children }) {
       toast.error('Please enter a URL')
       return
     }
-    
+
     try {
       let response
       if (isAuthenticated) {
         response = await linkService.createLink(urlToShorten)
-        setShortened(`http://localhost:4000/${response.data.shortId}`)
+        setShortened(`https://cleancut.codingwithjae.dev/${response.data.shortId}`)
         addLink(response.data)
       } else {
         response = await linkService.createLinkPublic(urlToShorten)
@@ -133,13 +131,13 @@ export function LinksProvider({ children }) {
     newShortId,
     setNewShortId,
     editingLink,
-    
+
     // Modal state
     isEditDialogOpen,
     setIsEditDialogOpen,
     isShortenFormOpen,
     setIsShortenFormOpen,
-    
+
     // Link operations
     addLink,
     updateLink,
@@ -147,14 +145,14 @@ export function LinksProvider({ children }) {
     handleDelete,
     handleEditLink,
     handleSaveEdit,
-    
+
     // Modal operations
     openShortenForm,
     closeShortenForm,
-    
+
     // URL operations
     shortenUrl,
-    
+
     // Utility functions
     copyToClipboard
   }

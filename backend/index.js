@@ -7,15 +7,12 @@ const { notFound, errorHandler } = require('./middlewares/errors.handler.js');
 const cors = require('cors');
 
 const app = express();
+const port = 5000;
 
-const port = process.env.PORT || 5000; 
-
-// Temporarily allow all origins for debugging CORS
-// app.use(cors({
-//   origin: [process.env.BASE_URL, 'http://localhost:5173'],
-//   credentials: true
-// }));
-app.use(cors()); // Allow all origins
+app.use(cors({
+  origin: ['https://cleancut.codingwithjae.dev'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(rateLimiter);
 app.use(requestLogger);
@@ -27,7 +24,6 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  // Log the actual port the server is listening on
-  console.log(`App listening on port ${port}`);
+  console.log(`App listening at http://localhost:${port}`);
 });
 
