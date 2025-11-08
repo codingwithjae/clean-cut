@@ -9,10 +9,7 @@ const cors = require('cors');
 const app = express();
 const port = 5000;
 
-app.use(cors({
-  origin: ['https://cleancut.codingwithjae.dev'],
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
 app.use(requestLogger);

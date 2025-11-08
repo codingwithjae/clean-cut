@@ -2,7 +2,6 @@ const { saveUrl, getUrl, deleteUrl, updateShortId, incrementClicks, checkingId }
 const { getUrlsByUserId } = require('../models/user.model.js');
 const { v4: uuidv4 } = require('uuid');
 const boom = require('@hapi/boom');
-const { BASE_URL } = process.env;
 
 async function privateUrlGenerator(req, res, next) {
   const { originalUrl } = req.body;
@@ -47,7 +46,7 @@ async function publicUrlGenerator(req, res, next) {
 
     res.status(201).json({
       message: 'URL shortened successfully',
-      shortUrl: `${BASE_URL}/${shortId}` || `http://localhost:5000/${shortId}`,
+      shortUrl: `http://localhost:5000/${shortId}`,
       shortId
     });
 

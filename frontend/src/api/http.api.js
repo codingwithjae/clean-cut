@@ -1,8 +1,7 @@
 import axios from 'axios'
-const BASE_URL = import.meta.env.VITE_BASE_URL
 
 const requests = axios.create({
-  baseURL: BASE_URL,
+  baseURL: 'http://localhost:5000',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',

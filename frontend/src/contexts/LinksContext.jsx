@@ -104,7 +104,7 @@ export function LinksProvider({ children }) {
       let response
       if (isAuthenticated) {
         response = await linkService.createLink(urlToShorten)
-        setShortened(`https://cleancut.codingwithjae.dev/${response.data.shortId}`)
+        setShortened(`http://localhost:5000/${response.data.shortId}`)
         addLink(response.data)
       } else {
         response = await linkService.createLinkPublic(urlToShorten)
