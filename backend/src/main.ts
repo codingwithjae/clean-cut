@@ -1,0 +1,49 @@
+import boom from '@hapi/boom';
+import cors from 'cors';
+import express from 'express';
+import helmet from 'helmet';
+import passport from 'passport';
+import './config/passport.js';
+import { env } from './config/env.js';
+import { logger } from './config/logger.js';
+import prisma from './config/prisma.js';
+import { ShortenController } from './controllers/shorten.controller.js';
+import { errorMiddleware } from './middlewares/error.middleware.js';
+import routes from './routes/index.js';
+
+const app = express();
+
+app.use(helmet());
+app.use(
+    cors({
+        origin: env.FRONTEND_URL,
+        credentials: true,
+    }),
+);
+app.use(express.json());
+app.use(passport.initialize());
+
+app.use('/api', routes);
+
+app.get('/:shortId', ShortenController.redirect);
+
+app.use((_req, _res, next): void => {
+    next(boom.notFound('Route not found'));
+});
+
+app.use(errorMiddleware);
+
+async function main() {
+    try {
+        await prisma.$connect();
+
+        app.listen(env.PORT, () => {
+            logger.info(`🚀 Server running on port ${env.PORT}`);
+        });
+    } catch (error) {
+        logger.error('Failed to start server', error);
+        process.exit(1);
+    }
+}
+
+main();

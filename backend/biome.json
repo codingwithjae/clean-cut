@@ -1,0 +1,37 @@
+{
+    "vcs": {
+        "enabled": true,
+        "clientKind": "git",
+        "useIgnoreFile": true
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 100
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "style": {
+                "noNonNullAssertion": "error"
+            },
+            "complexity": {
+                "noBannedTypes": "error",
+                "noExtraBooleanCast": "error",
+                "noStaticOnlyClass": "off"
+            },
+            "suspicious": {
+                "noExplicitAny": "error",
+                "noConsole": "error"
+            }
+        }
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "semicolons": "always"
+        }
+    }
+}
