@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'Fira Code', monospace;
+
+  --color-midnight: #0a0a0f;
+  --color-midnight-light: #151520;
+  --color-cyber-blue: #0088ff;
+  --color-cyber-blue-hover: #0077ee;
+  --color-neon-purple: #9d50ff;
+  --color-neon-green: #39ff14;
+  --color-code-gray: #2a2a35;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #a0a0b0;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-midnight);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}
+
+@keyframes shiny {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-shiny {
+  background-size: 200% auto;
+  animation: shiny 4s linear infinite;
+}
