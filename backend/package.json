@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "tsx watch src/main.ts",
         "start": "tsx src/main.ts",
-        "build": "tsc",
+        "build": "prisma generate && tsc",
         "test": "vitest",
         "lint": "biome check .",
         "lint:fix": "biome check --write .",
