@@ -14,6 +14,7 @@ import LinksPage from '@/pages/dashboard/Links';
 import DashboardOverview from '@/pages/dashboard/Overview';
 import DevelopersPage from '@/pages/public/Developers';
 import LandingPage from '@/pages/public/Landing';
+import NotFound from '@/pages/public/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route path="*" element={<NotFound />} />
           </Routes>
           <ToastContainer
             position="bottom-right"
