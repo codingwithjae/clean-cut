@@ -282,6 +282,7 @@ const LandingPage = () => {
         {}
         <section className="py-24 bg-midnight-light/50 border-t border-code-gray/30">
           <div className="max-w-7xl mx-auto px-6">
+            <h2 className="sr-only">Why teams choose Clean Cut</h2>
             <motion.div
               initial="hidden"
               whileInView="visible"

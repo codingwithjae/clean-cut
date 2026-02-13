@@ -91,7 +91,7 @@ export const RegisterForm = () => {
             <span className="w-full border-t border-code-gray" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-midnight px-2 text-text-secondary">Or sign up with</span>
+            <span className="px-2 text-text-secondary">Or sign up with</span>
           </div>
         </div>
 

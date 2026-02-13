@@ -9,12 +9,14 @@ if (!parsed.success) {
   process.exit(1);
 }
 
+const normalizeOrigin = (origin: string) => origin.trim().replace(/\/$/, '').toLowerCase();
+
 export const env = {
   ...parsed.data,
   jwtSecret: parsed.data.JWT_SECRET || parsed.data.JWT_SECRET_KEY || '',
   corsOrigins: parsed.data.CORS_ORIGINS
     ? parsed.data.CORS_ORIGINS.split(',')
-        .map((origin) => origin.trim())
+        .map((origin) => normalizeOrigin(origin))
         .filter(Boolean)
-    : [parsed.data.FRONTEND_URL],
+    : [normalizeOrigin(parsed.data.FRONTEND_URL)],
 };

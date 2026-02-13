@@ -12,27 +12,33 @@ import { errorMiddleware } from './middlewares/error.middleware.js';
 import routes from './routes/index.js';
 
 const app = express();
+const normalizeOrigin = (origin: string) => origin.trim().replace(/\/$/, '').toLowerCase();
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || env.NODE_ENV !== 'production') {
+      callback(null, true);
+      return;
+    }
+
+    const incomingOrigin = normalizeOrigin(origin);
+
+    if (env.corsOrigins.includes(incomingOrigin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error('CORS origin not allowed'));
+  },
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-API-Key'],
+  optionsSuccessStatus: 204,
+};
 
 app.set('trust proxy', 1);
 app.use(helmet());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || env.NODE_ENV !== 'production') {
-        callback(null, true);
-        return;
-      }
-
-      if (env.corsOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(new Error('CORS origin not allowed'));
-    },
-    credentials: true,
-  }),
-);
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(passport.initialize());
 

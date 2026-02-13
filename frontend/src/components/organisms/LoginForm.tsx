@@ -86,7 +86,7 @@ export const LoginForm = () => {
             <span className="w-full border-t border-code-gray" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-midnight px-2 text-text-secondary">Or continue with</span>
+            <span className="px-2 text-text-secondary">Or continue with</span>
           </div>
         </div>
 
