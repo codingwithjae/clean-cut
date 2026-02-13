@@ -35,7 +35,9 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
   if (links.length === 0) {
     return (
       <Card className="text-center py-12">
-        <p className="text-text-secondary mb-4">{emptyMessage || "You haven't created any links yet."}</p>
+        <p className="text-text-secondary mb-4">
+          {emptyMessage || "You haven't created any links yet."}
+        </p>
       </Card>
     );
   }
@@ -59,9 +61,11 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                 <div className="flex items-center gap-2">
                   <span>/{link.shortId}</span>
                   <button
+                    type="button"
                     onClick={() => copyToClipboard(link.shortId)}
                     className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
                     title="Copy"
+                    aria-label={`Copy short link ${link.shortId}`}
                   >
                     {copyingId === link.shortId ? (
                       <span className="text-neon-green text-xs">Copied!</span>
@@ -87,8 +91,9 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0"
-                    onClick={() => window.open(link.originalUrl, '_blank')}
+                    onClick={() => window.open(link.originalUrl, '_blank', 'noopener,noreferrer')}
                     title="Visit"
+                    aria-label={`Open destination URL for ${link.shortId}`}
                   >
                     <FaExternalLinkAlt className="h-4 w-4" />
                   </Button>
@@ -98,6 +103,7 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                     className="h-8 w-8 p-0 text-cyber-blue hover:text-white hover:bg-cyber-blue/10"
                     onClick={() => onEdit(link)}
                     title="Edit"
+                    aria-label={`Edit link ${link.shortId}`}
                   >
                     <FaEdit className="h-4 w-4" />
                   </Button>
@@ -107,6 +113,7 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                     className="h-8 w-8 p-0 text-red-400 hover:text-red-500 hover:bg-red-500/10"
                     onClick={() => onDelete(link)}
                     title="Delete"
+                    aria-label={`Delete link ${link.shortId}`}
                   >
                     <FaTrash className="h-4 w-4" />
                   </Button>

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FaChartBar, FaCopy, FaLink, FaMousePointer } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/api/client';
 import { type Link, LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Card } from '@/components/atoms/Card';
@@ -18,7 +19,8 @@ const DashboardOverview = () => {
     try {
       const data = await LinkService.getAll();
       setLinks(data);
-    } catch (_error) {
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to fetch dashboard statistics'));
     } finally {
       setIsLoading(false);
     }
@@ -113,9 +115,11 @@ const DashboardOverview = () => {
                           <div className="flex items-center gap-2">
                             <span>/{link.shortId}</span>
                             <button
+                              type="button"
                               onClick={() => copyToClipboard(link.shortId)}
                               className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
                               title="Copy"
+                              aria-label={`Copy short link ${link.shortId}`}
                             >
                               {copyingId === link.shortId ? (
                                 <span className="text-neon-green text-[10px]">Copied!</span>
@@ -130,10 +134,11 @@ const DashboardOverview = () => {
                         </td>
                         <td className="px-6 py-4 text-center">
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${link.clicks > 0
-                              ? 'bg-cyber-blue/20 text-cyber-blue'
-                              : 'bg-code-gray/20 text-text-secondary'
-                              }`}
+                            className={`px-2 py-0.5 rounded-full text-[10px] font-mono ${
+                              link.clicks > 0
+                                ? 'bg-cyber-blue/20 text-cyber-blue'
+                                : 'bg-code-gray/20 text-text-secondary'
+                            }`}
                           >
                             {link.clicks}
                           </span>

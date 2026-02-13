@@ -1,11 +1,11 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaLock, FaSignInAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/api/client';
 import { Button } from '@/components/atoms/Button';
 import { Card } from '@/components/atoms/Card';
 import { Input } from '@/components/atoms/Input';
@@ -32,11 +32,15 @@ export const LoginForm = () => {
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      toast.error(err.response?.data?.message || 'Invalid credentials');
+      toast.error(getApiErrorMessage(error, 'Invalid credentials'));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href =
+      import.meta.env.VITE_GOOGLE_AUTH_URL || 'http://localhost:5000/api/v1/auth/google';
   };
 
   return (
@@ -86,16 +90,8 @@ export const LoginForm = () => {
           </div>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() =>
-            (window.location.href =
-              import.meta.env.VITE_GOOGLE_AUTH_URL || 'http://localhost:5000/api/v1/auth/google')
-          }
-        >
-          <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+        <Button type="button" variant="outline" className="w-full" onClick={handleGoogleLogin}>
+          <svg aria-hidden="true" focusable="false" className="mr-2 h-4 w-4" viewBox="0 0 24 24">
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"

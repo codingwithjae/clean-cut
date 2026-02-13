@@ -1,10 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --font-mono: 'Fira Code', monospace;
-
+  --font-display: "Space Grotesk", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-mono: "Fira Code", monospace;
   --color-midnight: #0a0a0f;
   --color-midnight-light: #151520;
   --color-cyber-blue: #0088ff;
@@ -29,21 +28,80 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   font-weight: 700;
 }
 
-code, pre {
+code,
+pre {
   font-family: var(--font-mono);
 }
 
 @keyframes shiny {
-  0% { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .animate-shiny {
   background-size: 200% auto;
   animation: shiny 4s linear infinite;
+}
+
+.field-interactive {
+  width: 100%;
+  color: var(--color-text-primary);
+  transition: all 200ms;
+}
+
+.field-interactive::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.field-interactive:focus {
+  outline: none;
+  border-color: var(--color-cyber-blue);
+  box-shadow: 0 0 0 1px var(--color-cyber-blue);
+}
+
+.field-with-left-icon {
+  padding-left: 2.75rem;
+}
+
+.panel-base {
+  background-color: var(--color-midnight-light);
+  border: 1px solid var(--color-code-gray);
+}
+
+.nav-link-base {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition: all 200ms;
+}
+
+.nav-link-inactive {
+  color: var(--color-text-secondary);
+}
+
+.nav-link-inactive:hover {
+  color: var(--color-text-primary);
+  background-color: rgb(255 255 255 / 0.05);
+}
+
+.nav-link-active {
+  color: var(--color-cyber-blue);
+  background-color: rgb(0 136 255 / 0.1);
+  box-shadow: 0 0 10px rgb(0 240 255 / 0.1);
 }

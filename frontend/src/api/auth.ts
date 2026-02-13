@@ -4,16 +4,25 @@ import { api } from './client';
 interface AuthResponse {
   message: string;
   accessToken: string;
-  user?: {
+  user: {
     id: number;
     email: string;
-    name?: string;
+    name?: string | null;
+    isVerified: boolean;
   };
 }
 
 interface RegisterResponse {
   message: string;
-  apiKey: string;
+}
+
+interface MeResponse {
+  user: {
+    id: number;
+    email: string;
+    name?: string | null;
+    isVerified: boolean;
+  };
 }
 
 export const AuthService = {
@@ -31,8 +40,8 @@ export const AuthService = {
     localStorage.removeItem('accessToken');
   },
 
-  getApiKey: async (): Promise<{ apiKey: string }> => {
-    const response = await api.get<{ apiKey: string }>('/auth/api-key');
+  getApiKey: async (): Promise<{ apiKey: string | null }> => {
+    const response = await api.get<{ apiKey: string | null }>('/auth/api-key');
     return response.data;
   },
 
@@ -43,9 +52,9 @@ export const AuthService = {
     return response.data;
   },
 
-  getCurrentUser: async () => { },
-  getMe: async (): Promise<AuthResponse> => {
-    const response = await api.get<AuthResponse>('/auth/me');
+  getCurrentUser: async () => {},
+  getMe: async (): Promise<MeResponse> => {
+    const response = await api.get<MeResponse>('/auth/me');
     return response.data;
   },
   verifyEmail: async (token: string): Promise<{ message: string }> => {

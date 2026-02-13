@@ -1,9 +1,9 @@
-import type { AxiosError } from 'axios';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
 import { FaArrowRight, FaBolt, FaCheck, FaCode, FaCopy, FaMagic } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/api/client';
 import { LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Logo } from '@/components/atoms/Logo';
@@ -23,6 +23,26 @@ const staggerContainer = {
     },
   },
 };
+
+const buildCharItems = (text: string, prefix: string) => {
+  const seen = new Map<string, number>();
+  let order = 0;
+
+  return Array.from(text).map((char) => {
+    order += 1;
+    const count = (seen.get(char) ?? 0) + 1;
+    seen.set(char, count);
+
+    return {
+      id: `${prefix}-${char.charCodeAt(0)}-${count}`,
+      char,
+      order,
+    };
+  });
+};
+
+const heroLineOne = buildCharItems('Simple Links,', 'hero1');
+const heroLineTwo = buildCharItems('Total Reach.', 'hero2');
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
@@ -52,8 +72,7 @@ const LandingPage = () => {
       setShortenedUrl(result.shortUrl);
       toast.success('Link shortened successfully!');
     } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      toast.error(err.response?.data?.message || 'Failed to shorten link. Please try again.');
+      toast.error(getApiErrorMessage(error, 'Failed to shorten link. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +88,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-midnight text-white selection:bg-cyber-blue selection:text-midnight">
-      { }
+      {}
       <header className="fixed w-full z-50 backdrop-blur-md bg-midnight/80 border-b border-code-gray/30">
         <nav className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Logo />
@@ -108,7 +127,7 @@ const LandingPage = () => {
       </header>
 
       <main>
-        { }
+        {}
         <section className="relative pt-32 pb-20 overflow-hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full opacity-30 pointer-events-none">
             <motion.div
@@ -149,30 +168,30 @@ const LandingPage = () => {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8"
             >
               <FaBolt className="h-3 w-3 text-yellow-400" />
-              <span className="text-xs font-medium text-cyber-blue tracking-wide uppercase">
+              <span className="text-xs font-medium text-[#9bd3ff] tracking-wide uppercase">
                 Fast, free & open source
               </span>
             </motion.div>
 
             <motion.h1 className="text-5xl md:text-7xl font-display font-bold leading-tight mb-6">
-              {'Simple Links,'.split('').map((char, i) => (
+              {heroLineOne.map(({ id, char, order }) => (
                 <motion.span
-                  key={`char1-${i}`}
+                  key={id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03, duration: 0.4 }}
+                  transition={{ delay: order * 0.03, duration: 0.4 }}
                 >
                   {char}
                 </motion.span>
               ))}
               <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-blue via-white to-cyber-blue animate-shiny">
-                {'Total Reach.'.split('').map((char, i) => (
+                {heroLineTwo.map(({ id, char, order }) => (
                   <motion.span
-                    key={`char2-${i}`}
+                    key={id}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + i * 0.04, duration: 0.3 }}
+                    transition={{ delay: 0.5 + order * 0.04, duration: 0.3 }}
                   >
                     {char}
                   </motion.span>
@@ -197,7 +216,7 @@ const LandingPage = () => {
                   <input
                     type="url"
                     placeholder="Paste your long link here..."
-                    className="w-full pl-12 pr-32 py-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder-text-secondary focus:outline-none focus:border-cyber-blue focus:ring-1 focus:ring-cyber-blue transition-all"
+                    className="field-interactive pl-12 pr-32 py-4 bg-white/5 border border-white/10 rounded-xl"
                     value={originalUrl}
                     onChange={(e) => setOriginalUrl(e.target.value)}
                     required
@@ -260,7 +279,7 @@ const LandingPage = () => {
           </motion.div>
         </section>
 
-        { }
+        {}
         <section className="py-24 bg-midnight-light/50 border-t border-code-gray/30">
           <div className="max-w-7xl mx-auto px-6">
             <motion.div
@@ -315,7 +334,7 @@ const LandingPage = () => {
         </section>
       </main>
 
-      { }
+      {}
       <footer className="py-12 border-t border-code-gray/30 bg-midnight">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
@@ -329,13 +348,24 @@ const LandingPage = () => {
               href="https://github.com/codingwithjae"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-cyber-blue hover:underline whitespace-nowrap"
+              className="text-cyber-blue underline underline-offset-2 decoration-2 whitespace-nowrap"
             >
               Johander Campos
             </a>
           </div>
           <div className="flex gap-6">
-            <a href="https://github.com/codingwithjae/link-shortener" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-cyber-blue transition-colors">
+            <Link
+              to="/developers"
+              className="sm:hidden text-text-secondary underline underline-offset-2 decoration-code-gray hover:text-cyber-blue transition-colors"
+            >
+              Developers
+            </Link>
+            <a
+              href="https://github.com/codingwithjae/link-shortener"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text-secondary underline underline-offset-2 decoration-code-gray hover:text-cyber-blue transition-colors"
+            >
               GitHub
             </a>
           </div>

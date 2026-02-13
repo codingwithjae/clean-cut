@@ -1,10 +1,39 @@
-import { type ReactNode, useState } from 'react';
+import { type ComponentType, type ReactNode, useState } from 'react';
 import { FaBars, FaKey, FaLink, FaSignOutAlt, FaTimes } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
 import { Logo } from '@/components/atoms/Logo';
 import { useAuth } from '@/context/AuthContext';
+
+type NavItemProps = {
+  icon: ComponentType<{ className?: string }>;
+  label: string;
+  path: string;
+  isActive: boolean;
+  onClick?: () => void;
+};
+
+const DashboardNavItem = ({ icon: Icon, label, path, isActive, onClick }: NavItemProps) => {
+  return (
+    <Link
+      to={path}
+      onClick={onClick}
+      className={['nav-link-base group', isActive ? 'nav-link-active' : 'nav-link-inactive'].join(
+        ' ',
+      )}
+    >
+      <Icon
+        className={
+          isActive
+            ? 'h-5 w-5 text-cyber-blue'
+            : 'h-5 w-5 text-text-secondary group-hover:text-white'
+        }
+      />
+      <span className="font-medium">{label}</span>
+    </Link>
+  );
+};
 
 export const DashboardLayout = ({ children }: { children: ReactNode }) => {
   const { logout, user } = useAuth();
@@ -25,7 +54,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="min-h-screen bg-midnight">
-      { }
+      {}
       <aside className="fixed left-0 top-0 h-full w-64 border-r border-code-gray/30 bg-midnight-light hidden md:flex flex-col">
         <div className="p-6 border-b border-code-gray/30">
           <Logo />
@@ -33,22 +62,15 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
         <nav className="flex-1 p-4 space-y-2">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = location.pathname === item.path;
             return (
-              <Link
+              <DashboardNavItem
                 key={item.path}
-                to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 group ${isActive
-                  ? 'bg-cyber-blue/10 text-cyber-blue shadow-[0_0_10px_rgba(0,240,255,0.1)]'
-                  : 'text-text-secondary hover:text-white hover:bg-white/5'
-                  }`}
-              >
-                <Icon
-                  className={`h-5 w-5 ${isActive ? 'text-cyber-blue' : 'text-text-secondary group-hover:text-white'}`}
-                />
-                <span className="font-medium">{item.label}</span>
-              </Link>
+                path={item.path}
+                label={item.label}
+                icon={item.icon}
+                isActive={isActive}
+              />
             );
           })}
         </nav>
@@ -74,7 +96,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
         </div>
       </aside>
 
-      { }
+      {}
       <header className="md:hidden flex items-center justify-between p-4 border-b border-code-gray/30 bg-midnight-light">
         <Logo />
         <Button variant="ghost" size="sm" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -82,25 +104,20 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
         </Button>
       </header>
 
-      { }
+      {}
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-midnight-light border-b border-code-gray/30 z-50 p-4 space-y-2">
           {navItems.map((item) => {
-            const Icon = item.icon;
             const isActive = location.pathname === item.path;
             return (
-              <Link
+              <DashboardNavItem
                 key={item.path}
-                to={item.path}
+                path={item.path}
+                label={item.label}
+                icon={item.icon}
+                isActive={isActive}
                 onClick={() => setIsMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                  ? 'bg-cyber-blue/10 text-cyber-blue'
-                  : 'text-text-secondary hover:text-white hover:bg-white/5'
-                  }`}
-              >
-                <Icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
-              </Link>
+              />
             );
           })}
           <div className="pt-4 border-t border-code-gray/30 mt-2">
@@ -125,7 +142,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
         </div>
       )}
 
-      { }
+      {}
       <main className="md:ml-64 p-6 lg:p-10">
         <div className="max-w-7xl">{children}</div>
       </main>

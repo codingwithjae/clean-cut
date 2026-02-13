@@ -4,6 +4,12 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '@/context/AuthContext';
 
+interface GoogleCallbackToken {
+  id: number;
+  email: string;
+  name?: string | null;
+}
+
 export const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -13,7 +19,7 @@ export const AuthCallback = () => {
   useEffect(() => {
     if (token) {
       try {
-        const decoded: any = jwtDecode(token);
+        const decoded = jwtDecode<GoogleCallbackToken>(token);
         handleGoogleCallback(token, {
           id: decoded.id,
           email: decoded.email,

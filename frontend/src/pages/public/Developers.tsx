@@ -15,8 +15,10 @@ const CodeBlock = ({ code }: { code: string }) => {
     <div className="relative group rounded-lg overflow-hidden bg-midnight-light border border-code-gray/50">
       <div className="absolute right-2 top-2">
         <button
+          type="button"
           onClick={handleCopy}
           className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white transition-colors"
+          aria-label={copied ? 'Code copied' : 'Copy code snippet'}
         >
           {copied ? (
             <FaCheck className="h-4 w-4 text-neon-green" />

@@ -35,7 +35,10 @@ export const LinkService = {
     await api.delete(`/urls/${shortId}`);
   },
 
-  update: async (shortId: string, data: { newShortId?: string; originalUrl?: string }): Promise<Link> => {
+  update: async (
+    shortId: string,
+    data: { newShortId?: string; originalUrl?: string },
+  ): Promise<Link> => {
     const response = await api.patch<Link>(`/urls/${shortId}`, data);
     return response.data;
   },

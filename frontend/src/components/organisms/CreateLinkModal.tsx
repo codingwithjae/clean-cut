@@ -1,9 +1,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { AxiosError } from 'axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaLink, FaTimes } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/api/client';
 import { LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
@@ -39,8 +39,7 @@ export const CreateLinkModal = ({ isOpen, onClose, onCreated }: CreateLinkModalP
       onCreated();
       onClose();
     } catch (error) {
-      const err = error as AxiosError<{ message: string }>;
-      toast.error(err.response?.data?.message || 'Failed to create link');
+      toast.error(getApiErrorMessage(error, 'Failed to create link'));
     } finally {
       setIsLoading(false);
     }
@@ -50,11 +49,20 @@ export const CreateLinkModal = ({ isOpen, onClose, onCreated }: CreateLinkModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-midnight border border-code-gray rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="create-link-title"
+        className="w-full max-w-md bg-midnight border border-code-gray rounded-xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+      >
         <div className="flex items-center justify-between p-4 border-b border-code-gray/50 bg-midnight-light">
-          <h3 className="font-display font-semibold text-white">Create New Link</h3>
+          <h3 id="create-link-title" className="font-display font-semibold text-white">
+            Create New Link
+          </h3>
           <button
+            type="button"
             onClick={onClose}
+            aria-label="Close create link modal"
             className="text-text-secondary hover:text-white transition-colors"
           >
             <FaTimes className="h-5 w-5" />

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FaChevronLeft, FaChevronRight, FaPlus, FaSearch } from 'react-icons/fa';
 import { toast } from 'react-toastify';
+import { getApiErrorMessage } from '@/api/client';
 import { type Link, LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
@@ -26,8 +27,8 @@ const LinksPage = () => {
     try {
       const data = await LinkService.getAll();
       setLinks(data);
-    } catch (_error) {
-      toast.error('Failed to fetch links');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to fetch links'));
     } finally {
       setIsLoading(false);
     }
@@ -53,10 +54,6 @@ const LinksPage = () => {
     return filteredLinks.slice(start, start + LINKS_PER_PAGE);
   }, [filteredLinks, currentPage]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery]);
-
   const handleDeleteClick = (link: Link) => {
     setSelectedLink(link);
     setIsConfirmModalOpen(true);
@@ -75,8 +72,8 @@ const LinksPage = () => {
       setLinks((prev) => prev.filter((l) => l.shortId !== selectedLink.shortId));
       toast.success('Link deleted');
       setIsConfirmModalOpen(false);
-    } catch (_error) {
-      toast.error('Failed to delete link');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to delete link'));
     } finally {
       setIsActionLoading(false);
       setSelectedLink(null);
@@ -102,8 +99,11 @@ const LinksPage = () => {
             type="text"
             placeholder="Search by slug or URL..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 bg-midnight-light border border-code-gray/50 rounded-xl text-white placeholder-text-secondary text-sm focus:outline-none focus:border-cyber-blue focus:ring-1 focus:ring-cyber-blue transition-all"
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="field-interactive field-with-left-icon pr-4 py-3 bg-midnight-light border border-code-gray/50 rounded-xl text-sm"
           />
         </div>
 
@@ -118,7 +118,9 @@ const LinksPage = () => {
         {filteredLinks.length > LINKS_PER_PAGE && (
           <div className="flex items-center justify-between pt-2">
             <p className="text-xs text-text-secondary">
-              Showing {(currentPage - 1) * LINKS_PER_PAGE + 1}–{Math.min(currentPage * LINKS_PER_PAGE, filteredLinks.length)} of {filteredLinks.length} links
+              Showing {(currentPage - 1) * LINKS_PER_PAGE + 1}–
+              {Math.min(currentPage * LINKS_PER_PAGE, filteredLinks.length)} of{' '}
+              {filteredLinks.length} links
             </p>
             <div className="flex items-center gap-2">
               <Button

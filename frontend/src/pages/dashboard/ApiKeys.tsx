@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FaCopy, FaEye, FaEyeSlash, FaSync } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { AuthService } from '@/api/auth';
+import { getApiErrorMessage } from '@/api/client';
 import { Button } from '@/components/atoms/Button';
 import { Card } from '@/components/atoms/Card';
 import { ConfirmModal } from '@/components/organisms/ConfirmModal';
@@ -17,8 +18,8 @@ const ApiKeysPage = () => {
     try {
       const data = await AuthService.getApiKey();
       setApiKey(data.apiKey);
-    } catch (_error) {
-      toast.error('Failed to fetch API Key');
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to fetch API Key'));
     }
   }, []);
 
@@ -40,8 +41,10 @@ const ApiKeysPage = () => {
       setApiKey(data.apiKey);
       toast.success(isCreating ? 'API Key created!' : 'API Key regenerated!');
       setIsConfirmModalOpen(false);
-    } catch (_error) {
-      toast.error(`Failed to ${isCreating ? 'create' : 'regenerate'} API Key`);
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, `Failed to ${isCreating ? 'create' : 'regenerate'} API Key`),
+      );
     } finally {
       setIsActionLoading(false);
     }
@@ -78,6 +81,7 @@ const ApiKeysPage = () => {
                     type="button"
                     onClick={() => setIsVisible(!isVisible)}
                     className="text-text-secondary hover:text-white transition-colors"
+                    aria-label={isVisible ? 'Hide API key' : 'Show API key'}
                   >
                     {isVisible ? <FaEyeSlash className="h-4 w-4" /> : <FaEye className="h-4 w-4" />}
                   </button>
@@ -97,8 +101,9 @@ const ApiKeysPage = () => {
               {apiKey ? 'Danger Zone' : 'Get Started'}
             </h4>
             <div
-              className={`flex items-center justify-between p-4 border rounded-lg ${apiKey ? 'border-red-500/20 bg-red-500/5' : 'border-cyber-blue/20 bg-cyber-blue/5'
-                }`}
+              className={`flex items-center justify-between p-4 border rounded-lg ${
+                apiKey ? 'border-red-500/20 bg-red-500/5' : 'border-cyber-blue/20 bg-cyber-blue/5'
+              }`}
             >
               <div>
                 <p className={`text-sm font-medium ${apiKey ? 'text-red-400' : 'text-cyber-blue'}`}>
@@ -110,7 +115,11 @@ const ApiKeysPage = () => {
                     : 'Get your first API key to start using the API.'}
                 </p>
               </div>
-              <Button variant={apiKey ? 'danger' : 'primary'} size="sm" onClick={() => setIsConfirmModalOpen(true)}>
+              <Button
+                variant={apiKey ? 'danger' : 'primary'}
+                size="sm"
+                onClick={() => setIsConfirmModalOpen(true)}
+              >
                 <FaSync className="mr-2 h-4 w-4" />
                 {apiKey ? 'Regenerate' : 'Create Key'}
               </Button>

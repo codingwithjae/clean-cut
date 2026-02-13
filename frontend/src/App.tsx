@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { AuthProvider } from '@/context/AuthContext';
+import { SeoManager } from '@/shared/seo/SeoManager';
 import { AuthCallback } from './pages/auth/Callback';
 import LoginPage from './pages/auth/Login';
 import RegisterPage from './pages/auth/Register';
@@ -23,9 +24,10 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <Router>
+          <SeoManager />
           <Routes>
             <Route path="/" element={<LandingPage />} />
-            <Route path="/features" element={<LandingPage />} /> { }
+            <Route path="/features" element={<LandingPage />} /> {}
             <Route path="/developers" element={<DevelopersPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />

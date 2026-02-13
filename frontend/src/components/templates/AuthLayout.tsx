@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
@@ -9,7 +10,23 @@ interface AuthLayoutProps {
   subtitle: string;
 }
 
+const buildWordItems = (text: string) => {
+  const seen = new Map<string, number>();
+  return text.split(' ').map((word) => {
+    const count = (seen.get(word) ?? 0) + 1;
+    seen.set(word, count);
+    return {
+      id: `${word}-${count}`,
+      word,
+    };
+  });
+};
+
 export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
+  const quoteWords = buildWordItems(
+    "The shortest path to your audience isn't just a link, it's a bridge built on trust and speed.",
+  );
+
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2 relative">
       {}
@@ -33,13 +50,60 @@ export const AuthLayout = ({ children, title, subtitle }: AuthLayoutProps) => {
 
         <div className="flex-1 flex flex-col justify-center max-w-lg z-10">
           <blockquote className="space-y-6">
-            <p className="text-3xl font-display font-medium leading-relaxed bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary">
-              "The shortest path to your audience isn't just a link, it's a bridge built on trust
-              and speed."
-            </p>
-            <footer className="text-text-secondary font-mono text-sm">
-              — Built for Developers
-            </footer>
+            <motion.p
+              className="text-3xl font-display font-medium leading-relaxed bg-clip-text text-transparent bg-gradient-to-r from-white to-text-secondary"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: {
+                    staggerChildren: 0.07,
+                  },
+                },
+              }}
+            >
+              <motion.span
+                aria-hidden="true"
+                className="inline-block mr-2"
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
+                }}
+              >
+                "
+              </motion.span>
+              {quoteWords.map(({ id, word }) => (
+                <motion.span
+                  key={id}
+                  className="inline-block mr-2"
+                  variants={{
+                    hidden: { opacity: 0, y: 8 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
+                  }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <motion.span
+                aria-hidden="true"
+                className="inline-block"
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.55 } },
+                }}
+              >
+                "
+              </motion.span>
+            </motion.p>
+            <motion.footer
+              className="text-text-secondary font-mono text-sm"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.15, duration: 0.7 }}
+            >
+              — Built for developers, marketers and content creators
+            </motion.footer>
           </blockquote>
         </div>
       </div>
