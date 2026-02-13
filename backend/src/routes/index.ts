@@ -13,7 +13,7 @@ router.use(rateLimiterMiddleware);
 v1.use('/auth', authRouter);
 v1.use('/urls', urlRouter);
 v1.get('/health', (_req, res): void => {
-    res.status(200).json({ status: 'OK' });
+  res.status(200).json({ status: 'OK' });
 });
 
 router.use('/v1', v1);

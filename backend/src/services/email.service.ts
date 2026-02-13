@@ -3,40 +3,42 @@ import { env } from '../config/env.js';
 import { logger } from '../config/logger.js';
 
 export class EmailService {
-    private static transporter = nodemailer.createTransport({
-        host: env.SMTP_HOST || 'smtp.ethereal.email',
-        port: env.SMTP_PORT,
-        secure: env.SMTP_PORT === 465,
-        auth: env.SMTP_USER ? {
-            user: env.SMTP_USER,
-            pass: env.SMTP_PASS,
-        } : undefined,
-    });
-
-    static async sendVerificationEmail(email: string, name: string, token: string): Promise<void> {
-        const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
-
-        if (env.NODE_ENV !== 'production') {
-            logger.info('--- DEVELOPMENT EMAIL VERIFICATION ---');
-            logger.info(`To: ${email}`);
-            logger.info(`Verification URL: ${verificationUrl}`);
-            logger.info('--------------------------------------');
+  private static transporter = nodemailer.createTransport({
+    host: env.SMTP_HOST || 'smtp.ethereal.email',
+    port: env.SMTP_PORT,
+    secure: env.SMTP_PORT === 465,
+    auth: env.SMTP_USER
+      ? {
+          user: env.SMTP_USER,
+          pass: env.SMTP_PASS,
         }
+      : undefined,
+  });
 
-        try {
-            if (!env.SMTP_USER || !env.SMTP_HOST) {
-                if (env.NODE_ENV === 'production') {
-                    throw new Error('SMTP credentials missing in production');
-                }
-                logger.warn('SMTP credentials missing. Email not sent, but link logged above.');
-                return;
-            }
+  static async sendVerificationEmail(email: string, name: string, token: string): Promise<void> {
+    const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
 
-            const info = await this.transporter.sendMail({
-                from: env.EMAIL_FROM,
-                to: email,
-                subject: 'Verify your email - Clean Cut',
-                html: `
+    if (env.NODE_ENV !== 'production') {
+      logger.info('--- DEVELOPMENT EMAIL VERIFICATION ---');
+      logger.info(`To: ${email}`);
+      logger.info(`Verification URL: ${verificationUrl}`);
+      logger.info('--------------------------------------');
+    }
+
+    try {
+      if (!env.SMTP_USER || !env.SMTP_HOST) {
+        if (env.NODE_ENV === 'production') {
+          throw new Error('SMTP credentials missing in production');
+        }
+        logger.warn('SMTP credentials missing. Email not sent, but link logged above.');
+        return;
+      }
+
+      const info = await EmailService.transporter.sendMail({
+        from: env.EMAIL_FROM,
+        to: email,
+        subject: 'Verify your email - Clean Cut',
+        html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                         <h1 style="color: #3b82f6;">Welcome to Clean Cut, ${name}!</h1>
                         <p>Thank you for registering. Please verify your email address to get full access to your account, including API key generation.</p>
@@ -47,19 +49,19 @@ export class EmailService {
                         <p style="color: #3b82f6; font-size: 14px;">${verificationUrl}</p>
                     </div>
                 `,
-            });
+      });
 
-            logger.info(`Verification email sent to ${email}: ${info.messageId}`);
-            if (env.NODE_ENV !== 'production' && info) {
-                const previewUrl = nodemailer.getTestMessageUrl(info);
-                if (previewUrl) logger.info(`Preview URL: ${previewUrl}`);
-            }
-        } catch (error) {
-            logger.error(`Error sending verification email to ${email}`, error);
-            if (env.NODE_ENV === 'production') {
-                throw error;
-            }
-            logger.warn('Email sending failed, but continuing in development mode.');
-        }
+      logger.info(`Verification email sent to ${email}: ${info.messageId}`);
+      if (env.NODE_ENV !== 'production' && info) {
+        const previewUrl = nodemailer.getTestMessageUrl(info);
+        if (previewUrl) logger.info(`Preview URL: ${previewUrl}`);
+      }
+    } catch (error) {
+      logger.error(`Error sending verification email to ${email}`, error);
+      if (env.NODE_ENV === 'production') {
+        throw error;
+      }
+      logger.warn('Email sending failed, but continuing in development mode.');
     }
+  }
 }
