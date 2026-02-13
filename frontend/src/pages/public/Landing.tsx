@@ -323,8 +323,16 @@ const LandingPage = () => {
               Clean Cut<span className="text-cyber-blue">.</span>
             </span>
           </div>
-          <div className="text-sm text-text-secondary">
-            © 2026 Clean Cut, made with ❤️ by <a href="https://github.com/codingwithjae" target="_blank" rel="noopener noreferrer" className="text-cyber-blue hover:underline">Johander Campos</a>
+          <div className="text-sm text-text-secondary text-center md:text-left">
+            © 2026 Clean Cut, made with ❤️ by{' '}
+            <a
+              href="https://github.com/codingwithjae"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyber-blue hover:underline whitespace-nowrap"
+            >
+              Johander Campos
+            </a>
           </div>
           <div className="flex gap-6">
             <a href="https://github.com/codingwithjae/link-shortener" target="_blank" rel="noopener noreferrer" className="text-text-secondary hover:text-cyber-blue transition-colors">

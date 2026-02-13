@@ -60,7 +60,7 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                   <span>/{link.shortId}</span>
                   <button
                     onClick={() => copyToClipboard(link.shortId)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
+                    className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
                     title="Copy"
                   >
                     {copyingId === link.shortId ? (
