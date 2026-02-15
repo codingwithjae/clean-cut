@@ -2,6 +2,20 @@
 
 Simple open-source link shortener for developers and creators.
 
+## Live Links
+
+- App: `https://clean-cut-psi.vercel.app`
+- API: `https://cleancut.koyeb.app/api/v1`
+- API Health: `https://cleancut.koyeb.app/api/v1/health`
+
+## Documentation (GitHub)
+
+- Project docs index: `docs/README.md`
+- Architecture: `docs/architecture.md`
+- API contract: `docs/api-contract.md`
+- Deployment: `docs/deployment.md`
+- Changelog notes: `docs/changelog.md`
+
 ## Work In Progress
 
 This project is currently under active development.
@@ -66,3 +80,11 @@ pnpm dev
 cd frontend
 pnpm dev
 ```
+
+## Quick Demo Flow
+
+1. Open the app and shorten a URL from the landing page.
+2. Register a new user and verify the email.
+3. Sign in and create a private short link.
+4. Open Dashboard to review links and click stats.
+5. Generate an API key and test authenticated API usage.
