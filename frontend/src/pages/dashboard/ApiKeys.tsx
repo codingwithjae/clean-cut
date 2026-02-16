@@ -13,6 +13,7 @@ const ApiKeysPage = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isActionLoading, setIsActionLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const fetchApiKey = useCallback(async () => {
     try {
@@ -20,6 +21,8 @@ const ApiKeysPage = () => {
       setApiKey(data.apiKey);
     } catch (error) {
       toast.error(getApiErrorMessage(error, 'Failed to fetch API Key'));
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -70,13 +73,15 @@ const ApiKeysPage = () => {
             <div className="flex items-center gap-3">
               <div className="flex-1 bg-midnight-light border border-code-gray/50 rounded-lg px-4 py-3 font-mono text-sm text-text-primary flex items-center justify-between">
                 <span>
-                  {apiKey
-                    ? isVisible
-                      ? apiKey
-                      : '••••••••••••••••••••••••'
-                    : 'No API Key generated yet'}
+                  {isLoading
+                    ? 'Loading API Key...'
+                    : apiKey
+                      ? isVisible
+                        ? apiKey
+                        : '••••••••••••••••••••••••'
+                      : 'No API Key generated yet'}
                 </span>
-                {apiKey && (
+                {!isLoading && apiKey && (
                   <button
                     type="button"
                     onClick={() => setIsVisible(!isVisible)}
@@ -87,7 +92,7 @@ const ApiKeysPage = () => {
                   </button>
                 )}
               </div>
-              {apiKey && (
+              {!isLoading && apiKey && (
                 <Button variant="secondary" onClick={copyToClipboard}>
                   <FaCopy className="mr-2 h-4 w-4" />
                   Copy
@@ -118,6 +123,7 @@ const ApiKeysPage = () => {
               <Button
                 variant={apiKey ? 'danger' : 'primary'}
                 size="sm"
+                disabled={isLoading}
                 onClick={() => setIsConfirmModalOpen(true)}
               >
                 <FaSync className="mr-2 h-4 w-4" />

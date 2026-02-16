@@ -46,11 +46,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             {...props}
           />
         </div>
-        {error && (
-          <p id={errorId} className="text-xs text-red-500 ml-1">
-            {error}
-          </p>
-        )}
+        <p
+          id={errorId}
+          className={[
+            'ml-1 min-h-4 text-xs leading-4 transition-colors',
+            error ? 'text-red-500' : 'text-transparent',
+          ].join(' ')}
+        >
+          {error || ' '}
+        </p>
       </div>
     );
   },

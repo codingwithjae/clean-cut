@@ -1,5 +1,5 @@
 import { type ComponentType, type ReactNode, useState } from 'react';
-import { FaBars, FaKey, FaLink, FaSignOutAlt, FaTimes } from 'react-icons/fa';
+import { FaBars, FaKey, FaLink, FaSignOutAlt, FaTimes, FaUserCog } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/atoms/Button';
@@ -50,6 +50,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
     { label: 'Overview', path: '/dashboard', icon: MdDashboard },
     { label: 'My Links', path: '/dashboard/links', icon: FaLink },
     { label: 'API Keys', path: '/dashboard/api', icon: FaKey },
+    { label: 'Account', path: '/dashboard/account', icon: FaUserCog },
   ];
 
   return (

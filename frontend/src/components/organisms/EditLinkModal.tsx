@@ -42,9 +42,10 @@ export const EditLinkModal = ({ isOpen, onClose, onUpdated, link }: EditLinkModa
 
     setIsLoading(true);
     try {
+      const trimmedShortId = data.shortId?.trim();
       const payload = {
         originalUrl: data.originalUrl,
-        newShortId: data.shortId || undefined,
+        newShortId: trimmedShortId && trimmedShortId !== link.shortId ? trimmedShortId : undefined,
       };
       await LinkService.update(link.shortId, payload);
       toast.success('Link updated successfully!');

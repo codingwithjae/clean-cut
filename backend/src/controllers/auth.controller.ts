@@ -2,6 +2,7 @@ import boom from '@hapi/boom';
 import argon2 from 'argon2';
 import type { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../config/logger.js';
 import prisma from '../config/prisma.js';
 import type { AuthRequest } from '../middlewares/auth.middleware.js';
 import { UserModel } from '../models/user.model.js';
@@ -11,6 +12,7 @@ import { EmailService } from '../services/email.service.js';
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
     const { email, password, name } = req.body;
+    let createdUserId: number | null = null;
 
     try {
       const existingUser = await UserModel.findByEmail(email);
@@ -21,15 +23,33 @@ export class AuthController {
       const passwordHash = await argon2.hash(password);
       const verificationToken = uuidv4();
 
-      await UserModel.create({
+      const createdUser = await UserModel.create({
         email,
         password: passwordHash,
         name,
         verificationToken,
         isVerified: false,
       });
+      createdUserId = createdUser.id;
 
-      await EmailService.sendVerificationEmail(email, (name as string) || email, verificationToken);
+      try {
+        await EmailService.sendVerificationEmail(
+          email,
+          (name as string) || email,
+          verificationToken,
+        );
+      } catch (emailError) {
+        try {
+          await UserModel.delete(createdUserId);
+        } catch (cleanupError) {
+          logger.error('Failed to rollback user after email send failure', cleanupError);
+        }
+
+        throw boom.serviceUnavailable(
+          'Unable to send verification email right now. Please try again in a moment.',
+          { cause: emailError },
+        );
+      }
 
       res.status(201).json({
         message: 'Registration successful. Please check your email to verify your account.',
@@ -145,12 +165,63 @@ export class AuthController {
     const newApiKey = uuidv4();
 
     try {
+      const existingUser = await UserModel.findById(userId);
+      if (!existingUser) throw boom.notFound('User not found');
+      const hadApiKey = existingUser.apiKey !== null;
+
       const user = await UserModel.update(userId, { apiKey: newApiKey });
 
       res.status(200).json({
-        message: user.apiKey ? 'API Key regenerated successfully' : 'API Key created successfully',
+        message: hadApiKey ? 'API Key regenerated successfully' : 'API Key created successfully',
         apiKey: user.apiKey,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async changePassword(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    const userId = req.user?.id;
+    if (!userId) return next(boom.unauthorized());
+
+    const { currentPassword, newPassword } = req.body;
+
+    try {
+      const user = await UserModel.findById(userId);
+      if (!user) throw boom.notFound('User not found');
+      if (!user.password)
+        throw boom.badRequest('Password change is not available for OAuth-only accounts');
+
+      const isValidCurrentPassword = await argon2.verify(user.password, currentPassword);
+      if (!isValidCurrentPassword) throw boom.unauthorized('Current password is incorrect');
+
+      const isSamePassword = await argon2.verify(user.password, newPassword);
+      if (isSamePassword)
+        throw boom.badRequest('New password must be different from current password');
+
+      const passwordHash = await argon2.hash(newPassword);
+      await UserModel.update(userId, { password: passwordHash });
+
+      res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async deleteAccount(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
+    const userId = req.user?.id;
+    if (!userId) return next(boom.unauthorized());
+
+    try {
+      const user = await UserModel.findById(userId);
+      if (!user) throw boom.notFound('User not found');
+
+      await prisma.$transaction([
+        prisma.url.deleteMany({ where: { userId } }),
+        prisma.user.delete({ where: { id: userId } }),
+      ]);
+
+      res.status(200).json({ message: 'Account deleted successfully' });
     } catch (error) {
       next(error);
     }

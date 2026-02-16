@@ -109,8 +109,8 @@ export class ShortenController {
       }
 
       const updatedUrl = await UrlModel.update(shortId, {
-        shortId: newShortId || undefined,
-        originalUrl: originalUrl || undefined,
+        shortId: newShortId ?? undefined,
+        originalUrl: originalUrl ?? undefined,
       });
 
       res.status(200).json(updatedUrl);

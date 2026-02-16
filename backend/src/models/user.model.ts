@@ -58,4 +58,12 @@ export class UserModel {
       throw boom.internal('Error updating user', error);
     }
   }
+
+  static async delete(id: number): Promise<User> {
+    try {
+      return await prisma.user.delete({ where: { id } });
+    } catch (error) {
+      throw boom.internal('Error deleting user', error);
+    }
+  }
 }

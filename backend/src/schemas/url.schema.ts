@@ -11,7 +11,16 @@ export const updateShortIdSchema = z.object({
   params: z.object({
     shortId: z.string(),
   }),
-  body: z.object({
-    newShortId: z.string().min(1).max(5, 'The new shortId must not exceed 5 characters'),
-  }),
+  body: z
+    .object({
+      newShortId: z
+        .string()
+        .min(1)
+        .max(5, 'The new shortId must not exceed 5 characters')
+        .optional(),
+      originalUrl: z.string().url().optional(),
+    })
+    .refine((body) => body.newShortId !== undefined || body.originalUrl !== undefined, {
+      message: 'At least one field must be provided: newShortId or originalUrl',
+    }),
 });

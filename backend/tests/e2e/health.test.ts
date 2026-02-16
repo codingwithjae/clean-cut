@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
-app.use('/api/v1', routes);
+app.use('/api', routes);
 app.use(errorMiddleware);
 
 describe('Health E2E', () => {

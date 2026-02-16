@@ -23,6 +23,8 @@
 - `POST /auth/register`
 - `POST /auth/login`
 - `GET /auth/me`
+- `POST /auth/change-password` (authenticated)
+- `DELETE /auth/account` (authenticated)
 - `GET /auth/verify/:token`
 - `GET /auth/api-key`
 - `POST /auth/api-key/regenerate`
@@ -35,6 +37,7 @@
 - `POST /urls` (authenticated)
 - `GET /urls/my-links` (authenticated)
 - `PATCH /urls/:shortId` (owner only)
+  - Accepts partial body updates: `newShortId` and/or `originalUrl` (at least one required).
 - `DELETE /urls/:shortId` (owner only)
 
 ## Error Shape

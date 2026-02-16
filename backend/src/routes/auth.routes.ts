@@ -4,7 +4,7 @@ import { env } from '../config/env.js';
 import { AuthController } from '../controllers/auth.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { validateRequest } from '../middlewares/validation.middleware.js';
-import { loginSchema, registerSchema } from '../schemas/auth.schema.js';
+import { changePasswordSchema, loginSchema, registerSchema } from '../schemas/auth.schema.js';
 import { AuthService } from '../services/auth.service.js';
 
 interface GoogleUser {
@@ -38,6 +38,17 @@ router.post(
   authMiddleware as unknown as RequestHandler,
   AuthController.regenerateApiKey as unknown as RequestHandler,
 );
+router.post(
+  '/change-password',
+  authMiddleware as unknown as RequestHandler,
+  validateRequest(changePasswordSchema),
+  AuthController.changePassword as unknown as RequestHandler,
+);
+router.delete(
+  '/account',
+  authMiddleware as unknown as RequestHandler,
+  AuthController.deleteAccount as unknown as RequestHandler,
+);
 
 router.get(
   '/google',
@@ -50,7 +61,7 @@ router.get(
 router.get(
   '/google/callback',
   passport.authenticate('google', {
-    failureRedirect: '/login',
+    failureRedirect: new URL('/login', env.FRONTEND_URL).toString(),
     session: false,
   }),
   async (req, res) => {

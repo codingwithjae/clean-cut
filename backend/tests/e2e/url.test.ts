@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
-app.use('/api/v1', routes);
+app.use('/api', routes);
 app.use(errorMiddleware);
 
 describe('URL Management E2E', () => {
@@ -124,5 +124,25 @@ describe('URL Management E2E', () => {
       .set('Authorization', `Bearer ${accessToken}`);
     expect(deleteRes.status).toBe(200);
     expect(deleteRes.body.message).toContain('deleted');
+  });
+
+  it('should update originalUrl without changing shortId', async () => {
+    const originalUrl = faker.internet.url();
+    const createRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl });
+    expect(createRes.status).toBe(201);
+
+    const createdShortId = createRes.body.shortId as string;
+    const updatedOriginalUrl = faker.internet.url();
+
+    const updateRes = await request(app)
+      .patch(`/api/v1/urls/${createdShortId}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: updatedOriginalUrl });
+    expect(updateRes.status).toBe(200);
+    expect(updateRes.body.shortId).toBe(createdShortId);
+    expect(updateRes.body.originalUrl).toBe(updatedOriginalUrl);
   });
 });

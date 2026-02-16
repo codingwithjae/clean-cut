@@ -18,7 +18,8 @@ export const updateLinkSchema = z.object({
     .string()
     .min(3, 'Short ID must be at least 3 characters')
     .max(5, 'Short ID cannot exceed 5 characters')
-    .optional(),
+    .optional()
+    .or(z.literal('')),
 });
 
 export type UpdateLinkFormData = z.infer<typeof updateLinkSchema>;

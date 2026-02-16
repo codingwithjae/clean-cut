@@ -64,6 +64,11 @@ const routeSeoConfig: Record<string, RouteSeo> = {
     description: 'Manage API keys for Clean Cut integrations.',
     noindex: true,
   },
+  '/dashboard/account': {
+    title: 'Account Settings | Clean Cut',
+    description: 'Manage your account security and password.',
+    noindex: true,
+  },
 };
 
 const setOrCreateMeta = (name: string, content: string, attr: 'name' | 'property' = 'name') => {
@@ -122,4 +127,3 @@ export const SeoManager = () => {
 
   return null;
 };
-

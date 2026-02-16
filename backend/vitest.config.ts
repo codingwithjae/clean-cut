@@ -6,6 +6,7 @@ export default defineConfig({
     include: ['tests/e2e/**/*.test.ts'],
     exclude: ['node_modules', 'dist'],
     setupFiles: ['tests/setup.ts'],
+    fileParallelism: false,
     clearMocks: true,
     restoreMocks: true,
     testTimeout: 10000,

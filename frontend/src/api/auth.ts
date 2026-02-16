@@ -1,4 +1,4 @@
-import type { LoginFormData, RegisterFormData } from '@/schemas/auth.schema';
+import type { ChangePasswordPayload, LoginFormData, RegisterFormData } from '@/schemas/auth.schema';
 import { api } from './client';
 
 interface AuthResponse {
@@ -59,6 +59,16 @@ export const AuthService = {
   },
   verifyEmail: async (token: string): Promise<{ message: string }> => {
     const response = await api.get<{ message: string }>(`/auth/verify/${token}`);
+    return response.data;
+  },
+
+  changePassword: async (data: ChangePasswordPayload): Promise<{ message: string }> => {
+    const response = await api.post<{ message: string }>('/auth/change-password', data);
+    return response.data;
+  },
+
+  deleteAccount: async (): Promise<{ message: string }> => {
+    const response = await api.delete<{ message: string }>('/auth/account');
     return response.data;
   },
 };

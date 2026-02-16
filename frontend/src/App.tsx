@@ -10,6 +10,7 @@ import { VerifyEmail } from './pages/auth/VerifyEmail';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { ProtectedRoute } from '@/pages/auth/ProtectedRoute';
+import AccountPage from '@/pages/dashboard/Account';
 import ApiKeysPage from '@/pages/dashboard/ApiKeys';
 import LinksPage from '@/pages/dashboard/Links';
 import DashboardOverview from '@/pages/dashboard/Overview';
@@ -54,6 +55,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ApiKeysPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/dashboard/account"
+              element={
+                <ProtectedRoute>
+                  <AccountPage />
                 </ProtectedRoute>
               }
             />
