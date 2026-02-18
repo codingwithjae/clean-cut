@@ -4,6 +4,8 @@ export const envSchema = z
   .object({
     PORT: z.string().default('5000').transform(Number),
     DATABASE_URL: z.string().url(),
+    TEST_DATABASE_URL: z.string().url().optional(),
+    SHADOW_DATABASE_URL: z.string().url().optional(),
     GOOGLE_CLIENT_ID: z.string(),
     GOOGLE_CLIENT_SECRET: z.string(),
     GOOGLE_CALLBACK_URL: z.string().url(),

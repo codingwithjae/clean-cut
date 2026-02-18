@@ -1,14 +1,18 @@
-# Clean Cut Docs (GitHub)
+# Clean Cut Docs (Repo Summary)
 
-This folder contains practical technical documentation for repository readers and recruiters.
+Starlight is the full documentation source for this project: `[Starlight docs URL]`.
+
+This `/docs` folder is a concise technical summary for repository reviewers.
 
 ## Reading Order
 
 1. `architecture.md` - high-level design and responsibilities.
-2. `api-contract.md` - API base URL, auth, endpoints, and error shape.
-3. `deployment.md` - production setup (Vercel + Koyeb + PostgreSQL).
-4. `changelog.md` - important engineering changes.
+2. `api-contract.md` - base URL, auth endpoints, URL behaviors, and errors.
+3. `deployment.md` - production setup and env strategy.
+4. `changelog.md` - recent engineering changes.
 
-## Scope
+## PR Sync Checklist
 
-This documentation is intentionally concise. Full product docs can live in Starlight.
+- API contract changed -> update `api-contract.md`.
+- Env/config changed -> update `deployment.md`.
+- Core user/system flow changed -> update `architecture.md` and `changelog.md`.

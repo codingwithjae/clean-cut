@@ -4,7 +4,13 @@ import { env } from '../config/env.js';
 import { AuthController } from '../controllers/auth.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { validateRequest } from '../middlewares/validation.middleware.js';
-import { changePasswordSchema, loginSchema, registerSchema } from '../schemas/auth.schema.js';
+import {
+  changePasswordSchema,
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from '../schemas/auth.schema.js';
 import { AuthService } from '../services/auth.service.js';
 
 interface GoogleUser {
@@ -22,6 +28,12 @@ router.post(
 );
 router.get('/verify/:token', AuthController.verifyEmail);
 router.post('/login', validateRequest(loginSchema), AuthController.login);
+router.post(
+  '/forgot-password',
+  validateRequest(forgotPasswordSchema),
+  AuthController.forgotPassword,
+);
+router.post('/reset-password', validateRequest(resetPasswordSchema), AuthController.resetPassword);
 router.get(
   '/me',
   authMiddleware as unknown as RequestHandler,

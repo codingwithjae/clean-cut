@@ -29,6 +29,24 @@ describe('URL Management E2E', () => {
     password: faker.internet.password({ length: 12 }),
   };
 
+  const createVerifiedUserAndLogin = async () => {
+    const user = {
+      email: faker.internet.email().toLowerCase(),
+      password: faker.internet.password({ length: 12, pattern: /[A-Za-z0-9!]/ }),
+    };
+
+    await request(app).post('/api/v1/auth/register').send(user);
+    await prisma.user.update({ where: { email: user.email }, data: { isVerified: true } });
+
+    const loginRes = await request(app).post('/api/v1/auth/login').send(user);
+
+    return {
+      user,
+      accessToken: loginRes.body.accessToken as string,
+      userId: loginRes.body.user.id as number,
+    };
+  };
+
   beforeEach(async () => {
     await prisma.url.deleteMany();
     await prisma.user.deleteMany();
@@ -65,7 +83,12 @@ describe('URL Management E2E', () => {
     expect(res.status).toBe(201);
 
     const urls = await prisma.url.findMany({ where: { originalUrl } });
-    expect(urls[0].userId).toBeDefined();
+    const firstUrl = urls.at(0);
+    expect(firstUrl).toBeDefined();
+    if (!firstUrl) {
+      return;
+    }
+    expect(firstUrl.userId).toBeDefined();
   });
 
   it('should shorten a URL using API Key', async () => {
@@ -144,5 +167,162 @@ describe('URL Management E2E', () => {
     expect(updateRes.status).toBe(200);
     expect(updateRes.body.shortId).toBe(createdShortId);
     expect(updateRes.body.originalUrl).toBe(updatedOriginalUrl);
+  });
+
+  it('should reject private URL creation with invalid API key', async () => {
+    const res = await request(app)
+      .post('/api/v1/urls')
+      .set('X-API-Key', faker.string.uuid())
+      .send({ originalUrl: faker.internet.url() });
+
+    expect(res.status).toBe(401);
+    expect(res.body.message).toBe('Invalid API Key');
+  });
+
+  it('should allow anonymous public creation when X-API-Key is invalid', async () => {
+    const originalUrl = faker.internet.url();
+    const res = await request(app)
+      .post('/api/v1/urls/public')
+      .set('X-API-Key', faker.string.uuid())
+      .send({ originalUrl });
+
+    expect(res.status).toBe(201);
+    expect(res.body.shortId).toBeDefined();
+
+    const createdUrl = await prisma.url.findUnique({
+      where: { shortId: res.body.shortId as string },
+    });
+    expect(createdUrl?.userId).toBeNull();
+  });
+
+  it('should block user B from updating or deleting user A links', async () => {
+    const createRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(createRes.status).toBe(201);
+
+    const otherUser = await createVerifiedUserAndLogin();
+
+    const patchRes = await request(app)
+      .patch(`/api/v1/urls/${createRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${otherUser.accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(patchRes.status).toBe(403);
+    expect(patchRes.body.message).toContain('permission');
+
+    const deleteRes = await request(app)
+      .delete(`/api/v1/urls/${createRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${otherUser.accessToken}`);
+    expect(deleteRes.status).toBe(403);
+    expect(deleteRes.body.message).toContain('permission');
+  });
+
+  it('should reject PATCH with an empty body', async () => {
+    const createRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(createRes.status).toBe(201);
+
+    const patchRes = await request(app)
+      .patch(`/api/v1/urls/${createRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({});
+
+    expect(patchRes.status).toBe(400);
+    expect(patchRes.body.message).toBe('Validation failed');
+  });
+
+  it('should reject PATCH with invalid originalUrl', async () => {
+    const createRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(createRes.status).toBe(201);
+
+    const patchRes = await request(app)
+      .patch(`/api/v1/urls/${createRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: 'not-a-url' });
+
+    expect(patchRes.status).toBe(400);
+    expect(patchRes.body.message).toBe('Validation failed');
+  });
+
+  it('should reject PATCH with too-long newShortId', async () => {
+    const createRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(createRes.status).toBe(201);
+
+    const patchRes = await request(app)
+      .patch(`/api/v1/urls/${createRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ newShortId: faker.string.alphanumeric(6).toLowerCase() });
+
+    expect(patchRes.status).toBe(400);
+    expect(patchRes.body.message).toBe('Validation failed');
+  });
+
+  it('should reject PATCH with conflicting newShortId', async () => {
+    const firstRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(firstRes.status).toBe(201);
+
+    const secondRes = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(secondRes.status).toBe(201);
+
+    const patchRes = await request(app)
+      .patch(`/api/v1/urls/${firstRes.body.shortId as string}`)
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ newShortId: secondRes.body.shortId as string });
+
+    expect(patchRes.status).toBe(409);
+    expect(patchRes.body.message).toContain('already in use');
+  });
+
+  it('should return not found when PATCH shortId does not exist', async () => {
+    const patchRes = await request(app)
+      .patch('/api/v1/urls/not00')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+
+    expect(patchRes.status).toBe(404);
+    expect(patchRes.body.message).toContain('The shortened link does not exist');
+  });
+
+  it('should return only owner links in my-links', async () => {
+    const owner = await prisma.user.findUnique({ where: { email: testUser.email } });
+    expect(owner?.id).toBeDefined();
+
+    const ownerCreate = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(ownerCreate.status).toBe(201);
+
+    const otherUser = await createVerifiedUserAndLogin();
+    const otherCreate = await request(app)
+      .post('/api/v1/urls')
+      .set('Authorization', `Bearer ${otherUser.accessToken}`)
+      .send({ originalUrl: faker.internet.url() });
+    expect(otherCreate.status).toBe(201);
+
+    const myLinksRes = await request(app)
+      .get('/api/v1/urls/my-links')
+      .set('Authorization', `Bearer ${accessToken}`);
+
+    expect(myLinksRes.status).toBe(200);
+    const links = myLinksRes.body as Array<{ shortId: string; userId: number }>;
+    expect(links.some((link) => link.shortId === ownerCreate.body.shortId)).toBe(true);
+    expect(links.some((link) => link.shortId === otherCreate.body.shortId)).toBe(false);
+    expect(links.every((link) => link.userId === owner?.id)).toBe(true);
   });
 });

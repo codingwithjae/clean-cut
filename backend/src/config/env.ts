@@ -1,7 +1,29 @@
+import path from 'node:path';
 import dotenv from 'dotenv';
 import { envSchema } from '../schemas/env.schema.js';
 
-dotenv.config();
+const resolveEnvFile = () => {
+  if (process.env.ENV_FILE) {
+    return process.env.ENV_FILE;
+  }
+
+  switch (process.env.NODE_ENV) {
+    case 'production':
+      return '.env.production';
+    case 'test':
+      return '.env.test';
+    default:
+      return '.env.development';
+  }
+};
+
+const envFile = resolveEnvFile();
+const envPath = path.resolve(process.cwd(), envFile);
+const envLoad = dotenv.config({ path: envPath });
+
+if (envLoad.error) {
+  process.stderr.write(`[env] Failed to load ${envPath}: ${envLoad.error.message}\n`);
+}
 
 const parsed = envSchema.safeParse(process.env);
 

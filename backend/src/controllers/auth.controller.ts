@@ -17,7 +17,37 @@ export class AuthController {
     try {
       const existingUser = await UserModel.findByEmail(email);
       if (existingUser) {
-        throw boom.conflict('Email already in use');
+        if (existingUser.isVerified) {
+          throw boom.conflict('Email already in use');
+        }
+
+        const passwordHash = await argon2.hash(password);
+        const verificationToken = uuidv4();
+
+        await UserModel.update(existingUser.id, {
+          password: passwordHash,
+          name,
+          verificationToken,
+          isVerified: false,
+        });
+
+        try {
+          await EmailService.sendVerificationEmail(
+            email,
+            (name as string) || email,
+            verificationToken,
+          );
+        } catch (emailError) {
+          throw boom.serverUnavailable(
+            'Unable to send verification email right now. Please try again in a moment.',
+            { cause: emailError },
+          );
+        }
+
+        res.status(200).json({
+          message: 'Account pending verification. We sent a new verification email.',
+        });
+        return;
       }
 
       const passwordHash = await argon2.hash(password);
@@ -45,7 +75,7 @@ export class AuthController {
           logger.error('Failed to rollback user after email send failure', cleanupError);
         }
 
-        throw boom.serviceUnavailable(
+        throw boom.serverUnavailable(
           'Unable to send verification email right now. Please try again in a moment.',
           { cause: emailError },
         );
@@ -68,9 +98,13 @@ export class AuthController {
         throw boom.notFound('Invalid or expired verification token');
       }
 
+      if (user.isVerified) {
+        res.status(200).json({ message: 'Email already verified. You can sign in.' });
+        return;
+      }
+
       await UserModel.update(user.id, {
         isVerified: true,
-        verificationToken: null,
       });
 
       res.status(200).json({ message: 'Email verified successfully' });
@@ -114,6 +148,67 @@ export class AuthController {
           isVerified: user.isVerified,
         },
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { email } = req.body;
+    const genericMessage =
+      'If an account with that email exists, we sent password reset instructions.';
+
+    try {
+      const user = await UserModel.findByEmail(email);
+
+      if (user?.password) {
+        const passwordResetToken = uuidv4();
+        const passwordResetExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
+
+        await UserModel.update(user.id, {
+          passwordResetToken,
+          passwordResetExpiresAt,
+        });
+
+        try {
+          await EmailService.sendPasswordResetEmail(
+            user.email,
+            user.name || user.email,
+            passwordResetToken,
+          );
+        } catch (emailError) {
+          logger.error('Failed to send password reset email', emailError);
+        }
+      }
+
+      res.status(200).json({ message: genericMessage });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const { token, newPassword } = req.body;
+
+    try {
+      const user = await prisma.user.findUnique({ where: { passwordResetToken: token } });
+
+      if (!user || !user.passwordResetExpiresAt || user.passwordResetExpiresAt <= new Date()) {
+        throw boom.badRequest('Invalid or expired password reset token');
+      }
+
+      if (!user.password) {
+        throw boom.badRequest('Password reset is not available for OAuth-only accounts');
+      }
+
+      const passwordHash = await argon2.hash(newPassword);
+      await UserModel.update(user.id, {
+        password: passwordHash,
+        passwordResetToken: null,
+        passwordResetExpiresAt: null,
+      });
+
+      res.status(200).json({ message: 'Password reset successfully' });
     } catch (error) {
       next(error);
     }

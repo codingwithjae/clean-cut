@@ -8,12 +8,14 @@ This file tracks notable engineering-level changes relevant to reviewers.
 - Improved backend CORS handling for production origin allowlists.
 - Added explicit CORS preflight support (`OPTIONS`) in backend.
 - Added backend Vitest configuration and shared test setup file.
-- Expanded E2E suite with health and URL update/delete coverage.
+- Added account self-service endpoints (`change-password`, account deletion).
+- Added password recovery flow (`forgot-password`, `reset-password`) with token validation and confirmation checks.
+- Made email verification behavior idempotent (first verify succeeds, repeated verify returns already-verified success).
+- Enforced URL `PATCH /urls/:shortId` partial-update validation (at least one of `newShortId` or `originalUrl`).
+- Improved dashboard loading/error state handling for link and API-key data fetches.
+- Expanded E2E coverage for health, auth/account, password recovery, and URL update/delete flows.
 - Standardized lint/tooling setup and TypeScript config alignment.
-- Added account self-service endpoints (change password, delete account).
-- URL update now supports `originalUrl` updates.
 - Fixed API key regenerate response message (`create` vs `regenerate`).
-- Expanded E2E coverage for password/account/originalUrl update flows.
 
 ## Maintainer Notes
 

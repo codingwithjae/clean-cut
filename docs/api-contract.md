@@ -23,13 +23,20 @@
 - `POST /auth/register`
 - `POST /auth/login`
 - `GET /auth/me`
-- `POST /auth/change-password` (authenticated)
-- `DELETE /auth/account` (authenticated)
 - `GET /auth/verify/:token`
 - `GET /auth/api-key`
 - `POST /auth/api-key/regenerate`
+- `POST /auth/change-password` (authenticated)
+- `POST /auth/forgot-password` (public)
+- `POST /auth/reset-password` (public; requires `token`, `newPassword`, `confirmPassword`)
+- `DELETE /auth/account` (authenticated; delete-account flow)
 - `GET /auth/google`
 - `GET /auth/google/callback`
+
+Notes:
+
+- `POST /auth/forgot-password` is anti-enumeration: existing and non-existing emails receive the same `200` generic response.
+- `GET /auth/verify/:token` is idempotent by user state: first valid call verifies email (`Email verified successfully`), already-verified user returns `200` with `Email already verified. You can sign in.`
 
 ### URLs
 
@@ -37,7 +44,7 @@
 - `POST /urls` (authenticated)
 - `GET /urls/my-links` (authenticated)
 - `PATCH /urls/:shortId` (owner only)
-  - Accepts partial body updates: `newShortId` and/or `originalUrl` (at least one required).
+  - Partial update only: send `newShortId` and/or `originalUrl`; at least one is required.
 - `DELETE /urls/:shortId` (owner only)
 
 ## Error Shape
