@@ -16,6 +16,7 @@ const DashboardOverview = () => {
   const [copyingId, setCopyingId] = useState<string | null>(null);
 
   const fetchStats = useCallback(async () => {
+    setIsLoading(true);
     try {
       const data = await LinkService.getAll();
       setLinks(data);
@@ -110,14 +111,17 @@ const DashboardOverview = () => {
                     .sort((a, b) => b.clicks - a.clicks)
                     .slice(0, 5)
                     .map((link) => (
-                      <tr key={link.id} className="hover:bg-white/[0.02] transition-colors group">
+                      <tr
+                        key={link.id}
+                        className="hover\:bg-white\/\[0\.02\] transition-colors group"
+                      >
                         <td className="px-6 py-4 font-mono text-cyber-blue font-medium">
                           <div className="flex items-center gap-2">
                             <span>/{link.shortId}</span>
                             <button
                               type="button"
                               onClick={() => copyToClipboard(link.shortId)}
-                              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
+                              className="text-text-secondary transition-colors hover:text-white"
                               title="Copy"
                               aria-label={`Copy short link ${link.shortId}`}
                             >

@@ -27,7 +27,12 @@ export const VerifyEmail = () => {
         setMessage(response.message || 'Email verified successfully!');
       } catch (error) {
         setStatus('error');
-        setMessage(getApiErrorMessage(error, 'Verification failed. The link may be expired.'));
+        setMessage(
+          getApiErrorMessage(
+            error,
+            'Verification failed. This link may be invalid or expired. Request a new verification email from the register or login page.',
+          ),
+        );
       }
     };
 

@@ -1,4 +1,9 @@
-import type { ChangePasswordPayload, LoginFormData, RegisterFormData } from '@/schemas/auth.schema';
+import type {
+  ChangePasswordPayload,
+  LoginFormData,
+  RegisterFormData,
+  ResetPasswordFormData,
+} from '@/schemas/auth.schema';
 import { api } from './client';
 
 interface AuthResponse {
@@ -13,6 +18,10 @@ interface AuthResponse {
 }
 
 interface RegisterResponse {
+  message: string;
+}
+
+interface PasswordResetResponse {
   message: string;
 }
 
@@ -33,6 +42,16 @@ export const AuthService = {
 
   register: async (data: RegisterFormData): Promise<RegisterResponse> => {
     const response = await api.post<RegisterResponse>('/auth/register', data);
+    return response.data;
+  },
+
+  forgotPassword: async (email: string): Promise<PasswordResetResponse> => {
+    const response = await api.post<PasswordResetResponse>('/auth/forgot-password', { email });
+    return response.data;
+  },
+
+  resetPassword: async (data: ResetPasswordFormData): Promise<PasswordResetResponse> => {
+    const response = await api.post<PasswordResetResponse>('/auth/reset-password', data);
     return response.data;
   },
 

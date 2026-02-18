@@ -27,8 +27,11 @@ export const RegisterForm = () => {
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
     try {
-      await registerUser(data);
-      toast.success('Account created! Please sign in.');
+      const response = await registerUser(data);
+      toast.success(
+        response.message ||
+          'Account created. Please check your email to verify your account before signing in.',
+      );
       navigate('/login');
     } catch (error) {
       toast.error(getApiErrorMessage(error, 'Registration failed.'));
@@ -122,6 +125,15 @@ export const RegisterForm = () => {
           className="font-semibold text-cyber-blue hover:text-cyber-blue-hover transition-colors"
         >
           Sign in
+        </Link>
+      </p>
+
+      <p className="text-center text-xs text-text-secondary">
+        <Link
+          to="/forgot-password"
+          className="font-medium text-cyber-blue hover:text-cyber-blue-hover transition-colors"
+        >
+          Forgot your password?
         </Link>
       </p>
     </form>

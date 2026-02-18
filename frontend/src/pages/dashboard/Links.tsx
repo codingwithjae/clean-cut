@@ -22,13 +22,18 @@ const LinksPage = () => {
   const [isActionLoading, setIsActionLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const fetchLinks = useCallback(async () => {
+    setIsLoading(true);
+    setFetchError(null);
     try {
       const data = await LinkService.getAll();
       setLinks(data);
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Failed to fetch links'));
+      const message = getApiErrorMessage(error, 'Failed to fetch links');
+      setFetchError(message);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -49,6 +54,13 @@ const LinksPage = () => {
   }, [links, searchQuery]);
 
   const totalPages = Math.max(1, Math.ceil(filteredLinks.length / LINKS_PER_PAGE));
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const paginatedLinks = useMemo(() => {
     const start = (currentPage - 1) * LINKS_PER_PAGE;
     return filteredLinks.slice(start, start + LINKS_PER_PAGE);
@@ -113,6 +125,8 @@ const LinksPage = () => {
           onDelete={handleDeleteClick}
           onEdit={handleEditClick}
           emptyMessage={searchQuery ? 'No links match your search.' : undefined}
+          hasError={Boolean(fetchError) && links.length === 0}
+          errorMessage={fetchError ?? undefined}
         />
 
         {filteredLinks.length > LINKS_PER_PAGE && (

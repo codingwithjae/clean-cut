@@ -54,7 +54,6 @@ export const LoginForm = () => {
           {...register('email')}
         />
         <div className="space-y-1">
-          <div className="flex items-center justify-between">{}</div>
           <Input
             label="Password"
             type="password"
@@ -64,7 +63,12 @@ export const LoginForm = () => {
             {...register('password')}
           />
           <div className="flex justify-end">
-            <span className="text-xs text-text-secondary">Forgot password? Contact support.</span>
+            <Link
+              to="/forgot-password"
+              className="text-xs font-medium text-cyber-blue hover:text-cyber-blue-hover transition-colors"
+            >
+              Forgot your password?
+            </Link>
           </div>
         </div>
       </div>

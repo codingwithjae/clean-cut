@@ -8,6 +8,7 @@ import { LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { type CreateLinkFormData, createLinkSchema } from '@/schemas/url.schema';
+import { normalizeHttpUrl } from '@/shared/utils/url';
 
 interface CreateLinkModalProps {
   isOpen: boolean;
@@ -27,10 +28,17 @@ export const CreateLinkModal = ({ isOpen, onClose, onCreated }: CreateLinkModalP
   });
 
   const onSubmit = async (data: CreateLinkFormData) => {
+    const normalizedUrl = normalizeHttpUrl(data.originalUrl);
+
+    if (!normalizedUrl) {
+      toast.error('Please enter a valid URL');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const payload = {
-        originalUrl: data.originalUrl,
+        originalUrl: normalizedUrl,
         shortId: data.shortId || undefined,
       };
       await LinkService.create(payload);

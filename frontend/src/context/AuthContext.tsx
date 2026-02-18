@@ -12,7 +12,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   login: (data: LoginFormData) => Promise<void>;
-  register: (data: RegisterFormData) => Promise<void>;
+  register: (data: RegisterFormData) => Promise<{ message: string }>;
   logout: () => void;
   handleGoogleCallback: (token: string, userData: User) => void;
   isLoading: boolean;
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const registerUser = useCallback(async (data: RegisterFormData) => {
-    await AuthService.register(data);
+    return AuthService.register(data);
   }, []);
 
   const logout = useCallback(() => {

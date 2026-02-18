@@ -78,7 +78,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
         <div className="p-4 border-t border-code-gray/30">
           <div className="flex items-center gap-3 px-4 py-3 mb-2">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyber-blue to-neon-purple flex items-center justify-center text-white font-bold text-xs">
+            <div className="h-8 w-8 rounded-full bg-linear-to-tr from-cyber-blue to-neon-purple flex items-center justify-center text-white font-bold text-xs">
               {user?.name?.charAt(0) || 'U'}
             </div>
             <div className="flex-1 min-w-0">
@@ -123,7 +123,7 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
           })}
           <div className="pt-4 border-t border-code-gray/30 mt-2">
             <div className="flex items-center gap-3 px-4 py-3 mb-2">
-              <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-cyber-blue to-neon-purple flex items-center justify-center text-white font-bold text-xs">
+              <div className="h-8 w-8 rounded-full bg-linear-to-tr from-cyber-blue to-neon-purple flex items-center justify-center text-white font-bold text-xs">
                 {user?.name?.charAt(0) || 'U'}
               </div>
               <div className="flex-1 min-w-0">
@@ -145,7 +145,9 @@ export const DashboardLayout = ({ children }: { children: ReactNode }) => {
 
       {}
       <main className="md:ml-64 p-6 lg:p-10">
-        <div className="max-w-7xl">{children}</div>
+        <div className="mx-auto w-full max-w-6xl 2xl:max-h-[calc(100vh-5rem)] 2xl:overflow-y-auto 2xl:overscroll-contain 2xl:pr-2">
+          {children}
+        </div>
       </main>
     </div>
   );

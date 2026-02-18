@@ -8,6 +8,7 @@ import { LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Logo } from '@/components/atoms/Logo';
 import { useAuth } from '@/context/AuthContext';
+import { normalizeHttpUrl } from '@/shared/utils/url';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -54,21 +55,21 @@ const LandingPage = () => {
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const urlPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
-
-    if (!originalUrl) {
+    if (!originalUrl.trim()) {
       toast.error('Please enter a URL');
       return;
     }
 
-    if (!urlPattern.test(originalUrl)) {
+    const normalizedUrl = normalizeHttpUrl(originalUrl);
+
+    if (!normalizedUrl) {
       toast.error('Please enter a valid URL (e.g., https://example.com)');
       return;
     }
 
     setIsLoading(true);
     try {
-      const result = await LinkService.createPublic(originalUrl);
+      const result = await LinkService.createPublic(normalizedUrl);
       setShortenedUrl(result.shortUrl);
       toast.success('Link shortened successfully!');
     } catch (error) {
@@ -179,19 +180,25 @@ const LandingPage = () => {
                   key={id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: order * 0.03, duration: 0.4 }}
+                  transition={{
+                    delay: order * 0.03,
+                    duration: 0.4,
+                  }}
                 >
                   {char}
                 </motion.span>
               ))}
               <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-blue via-white to-cyber-blue animate-shiny">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-cyber-blue via-white to-cyber-blue animate-shiny">
                 {heroLineTwo.map(({ id, char, order }) => (
                   <motion.span
                     key={id}
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.5 + order * 0.04, duration: 0.3 }}
+                    transition={{
+                      delay: 0.5 + order * 0.04,
+                      duration: 0.3,
+                    }}
                   >
                     {char}
                   </motion.span>
@@ -236,9 +243,21 @@ const LandingPage = () => {
               <AnimatePresence>
                 {shortenedUrl && (
                   <motion.div
-                    initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                    animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
-                    exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                    initial={{
+                      opacity: 0,
+                      height: 0,
+                      marginTop: 0,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      height: 'auto',
+                      marginTop: 16,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      height: 0,
+                      marginTop: 0,
+                    }}
                     className="p-4 rounded-xl bg-white/5 border border-neon-green/30 flex items-center justify-between overflow-hidden"
                   >
                     <div className="truncate mr-4 text-neon-green font-mono">{shortenedUrl}</div>
@@ -336,7 +355,7 @@ const LandingPage = () => {
       </main>
 
       {}
-      <footer className="py-12 border-t border-code-gray/30 bg-midnight">
+      <footer className="py-12 border-t border-code-gray/30 bg-midnight-light/50">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="text-xl font-display font-bold text-white">

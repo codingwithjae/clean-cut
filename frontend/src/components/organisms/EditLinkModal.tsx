@@ -8,6 +8,7 @@ import { type Link, LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Input } from '@/components/atoms/Input';
 import { type UpdateLinkFormData, updateLinkSchema } from '@/schemas/url.schema';
+import { normalizeHttpUrl } from '@/shared/utils/url';
 
 interface EditLinkModalProps {
   isOpen: boolean;
@@ -40,11 +41,18 @@ export const EditLinkModal = ({ isOpen, onClose, onUpdated, link }: EditLinkModa
   const onSubmit = async (data: UpdateLinkFormData) => {
     if (!link) return;
 
+    const normalizedUrl = normalizeHttpUrl(data.originalUrl ?? '');
+
+    if (!normalizedUrl) {
+      toast.error('Please enter a valid URL');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const trimmedShortId = data.shortId?.trim();
       const payload = {
-        originalUrl: data.originalUrl,
+        originalUrl: normalizedUrl,
         newShortId: trimmedShortId && trimmedShortId !== link.shortId ? trimmedShortId : undefined,
       };
       await LinkService.update(link.shortId, payload);

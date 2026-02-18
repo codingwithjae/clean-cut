@@ -33,7 +33,7 @@ export const StatsCard = ({ title, value, icon: Icon, trend }: StatsCardProps) =
           <Icon className="h-5 w-5 text-cyber-blue" />
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-cyber-blue to-neon-green opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute bottom-0 left-0 w-full h-1 bg-linear-to-r from-cyber-blue to-neon-green opacity-0 group-hover:opacity-100 transition-opacity" />
     </Card>
   );
 };

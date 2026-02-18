@@ -11,9 +11,19 @@ interface LinkTableProps {
   onDelete: (link: Link) => void;
   onEdit: (link: Link) => void;
   emptyMessage?: string;
+  hasError?: boolean;
+  errorMessage?: string;
 }
 
-export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: LinkTableProps) => {
+export const LinkTable = ({
+  links,
+  isLoading,
+  onDelete,
+  onEdit,
+  emptyMessage,
+  hasError = false,
+  errorMessage,
+}: LinkTableProps) => {
   const [copyingId, setCopyingId] = useState<string | null>(null);
 
   const copyToClipboard = async (shortId: string) => {
@@ -36,7 +46,9 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
     return (
       <Card className="text-center py-12">
         <p className="text-text-secondary mb-4">
-          {emptyMessage || "You haven't created any links yet."}
+          {hasError
+            ? errorMessage || 'Unable to load links. Try again in a moment.'
+            : emptyMessage || "You haven't created any links yet."}
         </p>
       </Card>
     );
@@ -63,7 +75,7 @@ export const LinkTable = ({ links, isLoading, onDelete, onEdit, emptyMessage }: 
                   <button
                     type="button"
                     onClick={() => copyToClipboard(link.shortId)}
-                    className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-text-secondary hover:text-white"
+                    className="text-text-secondary transition-colors hover:text-white"
                     title="Copy"
                     aria-label={`Copy short link ${link.shortId}`}
                   >

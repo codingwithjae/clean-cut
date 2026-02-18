@@ -18,7 +18,7 @@ export default function NotFound() {
         </Link>
 
         <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyber-blue/20 to-electric-purple/20 border border-white/10 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-2xl bg-linear-to-br from-cyber-blue/20 to-electric-purple/20 border border-white/10 flex items-center justify-center">
             <FaExclamationTriangle className="text-3xl text-cyber-blue" />
           </div>
         </div>
