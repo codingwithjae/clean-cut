@@ -1,19 +1,21 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 import { env } from '../config/env.js';
 import { logger } from '../config/logger.js';
 
 export class EmailService {
-  private static transporter = nodemailer.createTransport({
-    host: env.SMTP_HOST || 'smtp.ethereal.email',
-    port: env.SMTP_PORT,
-    secure: env.SMTP_PORT === 465,
-    auth: env.SMTP_USER
-      ? {
-          user: env.SMTP_USER,
-          pass: env.SMTP_PASS,
-        }
-      : undefined,
-  });
+  private static resend: Resend | null = null;
+
+  private static getClient(): Resend {
+    if (!env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY is not configured');
+    }
+
+    if (!EmailService.resend) {
+      EmailService.resend = new Resend(env.RESEND_API_KEY);
+    }
+
+    return EmailService.resend;
+  }
 
   static async sendVerificationEmail(email: string, name: string, token: string): Promise<void> {
     const verificationUrl = `${env.FRONTEND_URL}/verify-email?token=${token}`;
@@ -26,15 +28,7 @@ export class EmailService {
     }
 
     try {
-      if (!env.SMTP_USER || !env.SMTP_HOST) {
-        if (env.NODE_ENV === 'production') {
-          throw new Error('SMTP credentials missing in production');
-        }
-        logger.warn('SMTP credentials missing. Email not sent, but link logged above.');
-        return;
-      }
-
-      const info = await EmailService.transporter.sendMail({
+      const result = await EmailService.getClient().emails.send({
         from: env.EMAIL_FROM,
         to: email,
         subject: 'Verify your email - Clean Cut',
@@ -51,17 +45,14 @@ export class EmailService {
                 `,
       });
 
-      logger.info(`Verification email sent to ${email}: ${info.messageId}`);
-      if (env.NODE_ENV !== 'production' && info) {
-        const previewUrl = nodemailer.getTestMessageUrl(info);
-        if (previewUrl) logger.info(`Preview URL: ${previewUrl}`);
+      if (result.error) {
+        throw new Error(`Resend API error: ${result.error.message}`);
       }
+
+      logger.info(`Verification email sent to ${email}: ${result.data?.id || 'no-id-returned'}`);
     } catch (error) {
       logger.error(`Error sending verification email to ${email}`, error);
-      if (env.NODE_ENV === 'production') {
-        throw error;
-      }
-      logger.warn('Email sending failed, but continuing in development mode.');
+      throw error;
     }
   }
 
@@ -76,15 +67,7 @@ export class EmailService {
     }
 
     try {
-      if (!env.SMTP_USER || !env.SMTP_HOST) {
-        if (env.NODE_ENV === 'production') {
-          throw new Error('SMTP credentials missing in production');
-        }
-        logger.warn('SMTP credentials missing. Email not sent, but link logged above.');
-        return;
-      }
-
-      const info = await EmailService.transporter.sendMail({
+      const result = await EmailService.getClient().emails.send({
         from: env.EMAIL_FROM,
         to: email,
         subject: 'Reset your password - Clean Cut',
@@ -102,17 +85,14 @@ export class EmailService {
                 `,
       });
 
-      logger.info(`Password reset email sent to ${email}: ${info.messageId}`);
-      if (env.NODE_ENV !== 'production' && info) {
-        const previewUrl = nodemailer.getTestMessageUrl(info);
-        if (previewUrl) logger.info(`Preview URL: ${previewUrl}`);
+      if (result.error) {
+        throw new Error(`Resend API error: ${result.error.message}`);
       }
+
+      logger.info(`Password reset email sent to ${email}: ${result.data?.id || 'no-id-returned'}`);
     } catch (error) {
       logger.error(`Error sending password reset email to ${email}`, error);
-      if (env.NODE_ENV === 'production') {
-        throw error;
-      }
-      logger.warn('Email sending failed, but continuing in development mode.');
+      throw error;
     }
   }
 }

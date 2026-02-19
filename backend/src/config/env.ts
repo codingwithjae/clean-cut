@@ -20,12 +20,13 @@ const resolveEnvFile = () => {
 const envFile = resolveEnvFile();
 const envPath = path.resolve(process.cwd(), envFile);
 const envLoad = dotenv.config({ path: envPath });
+const parsed = envSchema.safeParse(process.env);
 
-if (envLoad.error) {
+const missingEnvFile = envLoad.error && (envLoad.error as NodeJS.ErrnoException).code === 'ENOENT';
+
+if (envLoad.error && (!missingEnvFile || !parsed.success)) {
   process.stderr.write(`[env] Failed to load ${envPath}: ${envLoad.error.message}\n`);
 }
-
-const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
   process.exit(1);

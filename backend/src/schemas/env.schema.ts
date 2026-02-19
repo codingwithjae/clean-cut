@@ -18,9 +18,14 @@ export const envSchema = z
     SMTP_PORT: z.string().default('587').transform(Number),
     SMTP_USER: z.string().optional(),
     SMTP_PASS: z.string().optional(),
+    RESEND_API_KEY: z.string().min(1).optional(),
     EMAIL_FROM: z.string().email().default('noreply@cleancut.link'),
   })
   .refine((data) => data.JWT_SECRET || data.JWT_SECRET_KEY, {
     message: 'Either JWT_SECRET or JWT_SECRET_KEY must be provided',
     path: ['JWT_SECRET'],
+  })
+  .refine((data) => data.NODE_ENV !== 'production' || Boolean(data.RESEND_API_KEY), {
+    message: 'RESEND_API_KEY must be provided in production',
+    path: ['RESEND_API_KEY'],
   });
