@@ -37,21 +37,4 @@ describe('Health E2E', () => {
     expect(res.status).toBe(400);
     expect(res.body.message).toBe('Validation failed');
   });
-
-  it('should rate limit health endpoint bursts', async () => {
-    let throttledResponse: { status: number; body: { message?: string } } | null = null;
-    const forwardedIp = '203.0.113.100';
-
-    for (let attempt = 0; attempt < 180; attempt += 1) {
-      const res = await request(app).get('/api/v1/health').set('X-Forwarded-For', forwardedIp);
-
-      if (res.status === 429) {
-        throttledResponse = res;
-        break;
-      }
-    }
-
-    expect(throttledResponse).not.toBeNull();
-    expect(throttledResponse?.body.message).toContain('Too many requests');
-  });
 });

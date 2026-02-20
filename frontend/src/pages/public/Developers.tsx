@@ -1,32 +1,11 @@
-import { useState } from 'react';
-import { FaArrowLeft, FaCheck, FaCopy } from 'react-icons/fa';
+import { FaArrowLeft, FaCode } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/atoms/Button';
+import { DOCS_URL, PROD_API_BASE_URL } from '@/shared/constants/external';
 
 const CodeBlock = ({ code }: { code: string }) => {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <div className="relative group rounded-lg overflow-hidden bg-midnight-light border border-code-gray/50">
-      <div className="absolute right-2 top-2">
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="p-1.5 rounded-md bg-white/5 hover:bg-white/10 text-text-secondary hover:text-white transition-colors"
-          aria-label={copied ? 'Code copied' : 'Copy code snippet'}
-        >
-          {copied ? (
-            <FaCheck className="h-4 w-4 text-neon-green" />
-          ) : (
-            <FaCopy className="h-4 w-4" />
-          )}
-        </button>
-      </div>
+    <div className="rounded-lg overflow-hidden bg-midnight-light border border-code-gray/50">
       <pre className="p-4 overflow-x-auto text-sm font-mono text-gray-300">
         <code>{code}</code>
       </pre>
@@ -54,11 +33,19 @@ const DevelopersPage = () => {
 
       <main className="max-w-4xl mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-4xl font-display font-bold mb-4">API Documentation</h1>
+          <h1 className="text-4xl font-display font-bold mb-4">API Quickstart</h1>
           <p className="text-lg text-text-secondary">
-            Integrate Clean Cut's powerful link shortening capabilities directly into your
-            applications.
+            Minimal examples for integrating Clean Cut. For the full Starlight docs, open the
+            external docs site.
           </p>
+          <div className="mt-5">
+            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
+              <Button variant="secondary" size="lg">
+                <FaCode className="mr-2 h-4 w-4" />
+                API Documentation
+              </Button>
+            </a>
+          </div>
         </div>
 
         <div className="space-y-12">
@@ -70,7 +57,7 @@ const DevelopersPage = () => {
               All API requests require an API key to be included in the header. You can generate
               your API key in the dashboard.
             </p>
-            <CodeBlock code={`Authorization: Bearer sk_live_51MzQ2...`} />
+            <CodeBlock code={`X-API-Key: cc_live_51MzQ2...`} />
           </section>
 
           <section>
@@ -84,17 +71,15 @@ const DevelopersPage = () => {
               <span className="inline-block px-2 py-1 bg-neon-green/10 text-neon-green text-xs font-bold rounded">
                 POST
               </span>
-              <span className="ml-2 font-mono text-sm text-gray-300">
-                https://api.cleancut.com/v1/links
-              </span>
+              <span className="ml-2 font-mono text-sm text-gray-300">{PROD_API_BASE_URL}/urls</span>
             </div>
             <CodeBlock
-              code={`curl -X POST https://api.cleancut.com/v1/links \\
-  -H "Authorization: Bearer sk_live_..." \\
+              code={`curl -X POST "${PROD_API_BASE_URL}/urls" \\
+  -H "X-API-Key: cc_live_..." \\
   -H "Content-Type: application/json" \\
   -d '{
     "originalUrl": "https://example.com/very/long/url",
-    "shortId": "custom-alias" 
+    "shortId": "acme1"
   }'`}
             />
           </section>

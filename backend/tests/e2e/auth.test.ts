@@ -21,6 +21,7 @@ vi.mock('../../src/services/email.service.js', () => ({
 }));
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
@@ -227,6 +228,38 @@ describe('Authentication & API Keys E2E', () => {
     expect(regenRes.body.apiKey).not.toBe(firstKey);
   });
 
+  it('should not allow X-API-Key auth for API key management endpoints', async () => {
+    const user = createTestUser();
+    const regRes = await request(app).post('/api/v1/auth/register').send(user);
+    expect(regRes.status).toBe(201);
+
+    await prisma.user.update({ where: { email: user.email }, data: { isVerified: true } });
+
+    const loginRes = await request(app).post('/api/v1/auth/login').send({
+      email: user.email,
+      password: user.password,
+    });
+    expect(loginRes.status).toBe(200);
+    const token = loginRes.body.accessToken as string;
+
+    const createRes = await request(app)
+      .post('/api/v1/auth/api-key/regenerate')
+      .set('Authorization', `Bearer ${token}`);
+    expect(createRes.status).toBe(200);
+    const apiKey = createRes.body.apiKey as string;
+    expect(apiKey).toBeDefined();
+
+    const getWithKey = await request(app).get('/api/v1/auth/api-key').set('X-API-Key', apiKey);
+    expect(getWithKey.status).toBe(401);
+    expect(getWithKey.body.message).toContain('Bearer token required');
+
+    const regenWithKey = await request(app)
+      .post('/api/v1/auth/api-key/regenerate')
+      .set('X-API-Key', apiKey);
+    expect(regenWithKey.status).toBe(401);
+    expect(regenWithKey.body.message).toContain('Bearer token required');
+  });
+
   it('should change password successfully', async () => {
     const user = createTestUser();
     const regRes = await request(app).post('/api/v1/auth/register').send(user);
@@ -321,7 +354,6 @@ describe('Authentication & API Keys E2E', () => {
     await prisma.user.update({
       where: { email: user.email },
       data: {
-        isVerified: true,
         passwordResetToken: resetToken,
         passwordResetExpiresAt: new Date(Date.now() + 30 * 60 * 1000),
       },
@@ -336,6 +368,9 @@ describe('Authentication & API Keys E2E', () => {
     });
     expect(resetRes.status).toBe(200);
     expect(resetRes.body.message).toContain('Password reset successfully');
+
+    const updatedUser = await prisma.user.findUnique({ where: { email: user.email } });
+    expect(updatedUser?.isVerified).toBe(true);
 
     const oldLoginRes = await request(app).post('/api/v1/auth/login').send({
       email: user.email,
@@ -421,6 +456,108 @@ describe('Authentication & API Keys E2E', () => {
     expect(secondReset.body.message).toContain('Invalid or expired password reset token');
   });
 
+  it('should rate limit auth abuse-sensitive unauthenticated endpoints per IP', async () => {
+    const ip = '203.0.113.30';
+    const resetPassword = faker.internet.password({ length: 14, pattern: /[A-Za-z0-9!]/ });
+
+    const cases = [
+      {
+        name: 'login',
+        max: env.RATE_LIMIT_AUTH_LOGIN_MAX,
+        expectedMessage: 'Too many login attempts',
+        makeRequest: () =>
+          request(app)
+            .post('/api/v1/auth/login')
+            .set('X-Forwarded-For', ip)
+            .send({
+              email: faker.internet.email().toLowerCase(),
+              password: faker.internet.password({ length: 12, pattern: /[A-Za-z0-9!]/ }),
+            }),
+      },
+      {
+        name: 'register',
+        max: env.RATE_LIMIT_AUTH_REGISTER_MAX,
+        expectedMessage: 'Too many registration attempts',
+        makeRequest: () =>
+          request(app)
+            .post('/api/v1/auth/register')
+            .set('X-Forwarded-For', ip)
+            .send({
+              email: faker.internet.email().toLowerCase(),
+              password: faker.internet.password({ length: 12, pattern: /[A-Za-z0-9!]/ }),
+              name: faker.person.fullName(),
+            }),
+      },
+      {
+        name: 'forgot-password',
+        max: env.RATE_LIMIT_AUTH_FORGOT_PASSWORD_MAX,
+        expectedMessage: 'Too many password reset requests',
+        makeRequest: () =>
+          request(app).post('/api/v1/auth/forgot-password').set('X-Forwarded-For', ip).send({
+            email: faker.internet.email().toLowerCase(),
+          }),
+      },
+      {
+        name: 'reset-password',
+        max: env.RATE_LIMIT_AUTH_RESET_PASSWORD_MAX,
+        expectedMessage: 'Too many password reset attempts',
+        makeRequest: () =>
+          request(app).post('/api/v1/auth/reset-password').set('X-Forwarded-For', ip).send({
+            token: faker.string.uuid(),
+            newPassword: resetPassword,
+            confirmPassword: resetPassword,
+          }),
+      },
+    ] as const;
+
+    for (const testCase of cases) {
+      for (let i = 0; i < testCase.max; i++) {
+        const res = await testCase.makeRequest();
+        expect(res.status).not.toBe(429);
+      }
+
+      const blocked = await testCase.makeRequest();
+      expect(blocked.status, `endpoint: ${testCase.name}`).toBe(429);
+      expect(blocked.body.statusCode).toBe(429);
+      expect(blocked.body.error).toBe('Too Many Requests');
+      expect(blocked.body.message).toContain(testCase.expectedMessage);
+    }
+  });
+
+  it('should rate limit api-key regeneration endpoint per IP', async () => {
+    const ip = '203.0.113.31';
+    const user = createTestUser();
+    const regRes = await request(app).post('/api/v1/auth/register').send(user);
+    expect(regRes.status).toBe(201);
+
+    await prisma.user.update({ where: { email: user.email }, data: { isVerified: true } });
+
+    const loginRes = await request(app).post('/api/v1/auth/login').send({
+      email: user.email,
+      password: user.password,
+    });
+    expect(loginRes.status).toBe(200);
+    const token = loginRes.body.accessToken as string;
+
+    for (let i = 0; i < env.RATE_LIMIT_AUTH_API_KEY_REGENERATE_MAX; i++) {
+      const res = await request(app)
+        .post('/api/v1/auth/api-key/regenerate')
+        .set('Authorization', `Bearer ${token}`)
+        .set('X-Forwarded-For', ip);
+      expect(res.status).toBe(200);
+    }
+
+    const blocked = await request(app)
+      .post('/api/v1/auth/api-key/regenerate')
+      .set('Authorization', `Bearer ${token}`)
+      .set('X-Forwarded-For', ip);
+
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.statusCode).toBe(429);
+    expect(blocked.body.error).toBe('Too Many Requests');
+    expect(blocked.body.message).toContain('Too many API key regeneration requests');
+  });
+
   it('should delete account and owned URLs', async () => {
     const user = createTestUser();
     const regRes = await request(app).post('/api/v1/auth/register').send(user);
@@ -478,6 +615,7 @@ describe('Authentication & API Keys E2E', () => {
 
     const meRes = await request(app).get('/api/v1/auth/me').set('Authorization', `Bearer ${token}`);
     expect(meRes.status).toBe(401);
+    expect(meRes.body.message).toContain('Invalid or expired token');
   });
 
   it('should redirect to frontend login on google callback failure', async () => {

@@ -204,6 +204,7 @@ export class AuthController {
       const passwordHash = await argon2.hash(newPassword);
       await UserModel.update(user.id, {
         password: passwordHash,
+        isVerified: true,
         passwordResetToken: null,
         passwordResetExpiresAt: null,
       });

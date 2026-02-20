@@ -15,3 +15,19 @@ process.env.GOOGLE_CLIENT_SECRET ??= 'test-google-client-secret';
 process.env.GOOGLE_CALLBACK_URL ??= 'http://localhost:5000/api/v1/auth/google/callback';
 process.env.DATABASE_URL ??=
   process.env.TEST_DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/cleancut_test';
+
+// Keep rate-limit tests fast and deterministic.
+process.env.RATE_LIMIT_PUBLIC_SHORTEN_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_PUBLIC_SHORTEN_MAX ??= '10';
+process.env.RATE_LIMIT_REDIRECT_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_REDIRECT_MAX ??= '5';
+process.env.RATE_LIMIT_AUTH_LOGIN_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_AUTH_LOGIN_MAX ??= '20';
+process.env.RATE_LIMIT_AUTH_REGISTER_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_AUTH_REGISTER_MAX ??= '20';
+process.env.RATE_LIMIT_AUTH_FORGOT_PASSWORD_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_AUTH_FORGOT_PASSWORD_MAX ??= '20';
+process.env.RATE_LIMIT_AUTH_RESET_PASSWORD_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_AUTH_RESET_PASSWORD_MAX ??= '20';
+process.env.RATE_LIMIT_AUTH_API_KEY_REGENERATE_WINDOW_MS ??= '60000';
+process.env.RATE_LIMIT_AUTH_API_KEY_REGENERATE_MAX ??= '20';

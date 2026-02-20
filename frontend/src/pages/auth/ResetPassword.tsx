@@ -75,9 +75,14 @@ const ResetPasswordPage = () => {
           <Link to="/login" className="block">
             <Button className="w-full font-bold">Continue to Sign in</Button>
           </Link>
+
+          <p className="text-xs text-text-secondary">
+            If sign-in still fails, your email may need verification. Check your inbox for the
+            verification email, or try signing in to trigger a fresh verification email.
+          </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
           <input type="hidden" {...register('token')} />
 
           {!hasToken && (

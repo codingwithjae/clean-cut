@@ -1,6 +1,10 @@
 import { type RequestHandler, Router } from 'express';
 import { ShortenController } from '../controllers/shorten.controller.js';
 import { authMiddleware, optionalAuthMiddleware } from '../middlewares/auth.middleware.js';
+import {
+  publicShortenRateLimiter,
+  redirectRateLimiter,
+} from '../middlewares/rateLimiter.middleware.js';
 import { linkOwnershipValidator } from '../middlewares/url.middleware.js';
 import { validateRequest } from '../middlewares/validation.middleware.js';
 import { shortenSchema, updateShortIdSchema } from '../schemas/url.schema.js';
@@ -9,11 +13,16 @@ const router = Router();
 
 router.post(
   '/public',
+  publicShortenRateLimiter as RequestHandler,
   optionalAuthMiddleware as RequestHandler,
   validateRequest(shortenSchema),
   ShortenController.publicShorten as RequestHandler,
 );
-router.get('/redirect/:shortId', ShortenController.redirect as RequestHandler);
+router.get(
+  '/redirect/:shortId',
+  redirectRateLimiter as RequestHandler,
+  ShortenController.redirect as RequestHandler,
+);
 
 router.use(authMiddleware as RequestHandler);
 router.post(

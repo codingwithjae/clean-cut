@@ -22,9 +22,8 @@ export async function authMiddleware(req: AuthRequest, _res: Response, next: Nex
     try {
       const payload = await AuthService.decodeToken(token);
       const user = await UserModel.findByEmail(payload.email);
-      if (!user?.isVerified) {
-        return next(boom.unauthorized('Please verify your email address'));
-      }
+      if (!user) return next(boom.unauthorized('Invalid or expired token'));
+      if (!user.isVerified) return next(boom.unauthorized('Please verify your email address'));
       req.user = payload;
       return next();
     } catch (_error) {
@@ -52,6 +51,28 @@ export async function authMiddleware(req: AuthRequest, _res: Response, next: Nex
   }
 
   return next(boom.unauthorized('No authentication provided (Bearer token or X-API-Key required)'));
+}
+
+export async function bearerAuthMiddleware(req: AuthRequest, _res: Response, next: NextFunction) {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader?.startsWith('Bearer ')) {
+    return next(boom.unauthorized('Bearer token required'));
+  }
+
+  const token = authHeader.split(' ')[1];
+  if (!token) return next(boom.unauthorized('Invalid token format'));
+
+  try {
+    const payload = await AuthService.decodeToken(token);
+    const user = await UserModel.findByEmail(payload.email);
+    if (!user) return next(boom.unauthorized('Invalid or expired token'));
+    if (!user.isVerified) return next(boom.unauthorized('Please verify your email address'));
+    req.user = payload;
+    return next();
+  } catch (_error) {
+    return next(boom.unauthorized('Invalid or expired token'));
+  }
 }
 
 export async function optionalAuthMiddleware(req: AuthRequest, _res: Response, next: NextFunction) {

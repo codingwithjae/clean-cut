@@ -25,9 +25,9 @@ const routeSeoConfig: Record<string, RouteSeo> = {
     canonicalPath: '/',
   },
   '/developers': {
-    title: 'Clean Cut API Docs | URL Shortener API',
+    title: 'Clean Cut API Quickstart | URL Shortener API',
     description:
-      'Integrate Clean Cut in minutes. Authenticate with API keys and create short links programmatically.',
+      'Quickstart examples for the Clean Cut API: authenticate with X-API-Key and create short links programmatically.',
   },
   '/login': {
     title: 'Sign In | Clean Cut',

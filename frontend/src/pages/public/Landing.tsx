@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaArrowRight, FaBolt, FaCheck, FaCode, FaCopy, FaMagic } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -8,6 +8,7 @@ import { LinkService } from '@/api/link';
 import { Button } from '@/components/atoms/Button';
 import { Logo } from '@/components/atoms/Logo';
 import { useAuth } from '@/context/AuthContext';
+import { DOCS_URL } from '@/shared/constants/external';
 import { normalizeHttpUrl } from '@/shared/utils/url';
 
 const fadeInUp = {
@@ -45,12 +46,27 @@ const buildCharItems = (text: string, prefix: string) => {
 const heroLineOne = buildCharItems('Simple Links,', 'hero1');
 const heroLineTwo = buildCharItems('Total Reach.', 'hero2');
 
+const landingFormPhrases = [
+  'Paste your long link here...',
+  'Drop a URL to make it shareable...',
+  'Turn a long URL into a clean short link...',
+];
+
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
   const [originalUrl, setOriginalUrl] = useState('');
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [formPhraseIndex, setFormPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      setFormPhraseIndex((current) => (current + 1) % landingFormPhrases.length);
+    }, 4500);
+
+    return () => window.clearInterval(id);
+  }, []);
 
   const handleShorten = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -222,7 +238,7 @@ const LandingPage = () => {
                   </div>
                   <input
                     type="url"
-                    placeholder="Paste your long link here..."
+                    placeholder={landingFormPhrases[formPhraseIndex]}
                     className="field-interactive pl-12 pr-32 py-4 bg-white/5 border border-white/10 rounded-xl"
                     value={originalUrl}
                     onChange={(e) => setOriginalUrl(e.target.value)}
@@ -288,12 +304,17 @@ const LandingPage = () => {
                   <FaArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
-              <Link to="/developers" className="w-full sm:w-auto">
+              <a
+                href={DOCS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
                 <Button variant="secondary" size="lg" className="w-full sm:w-auto">
                   <FaCode className="mr-2 h-4 w-4" />
                   API Documentation
                 </Button>
-              </Link>
+              </a>
             </motion.div>
           </motion.div>
         </section>
@@ -374,12 +395,14 @@ const LandingPage = () => {
             </a>
           </div>
           <div className="flex gap-6">
-            <Link
-              to="/developers"
+            <a
+              href={DOCS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className="sm:hidden text-text-secondary underline underline-offset-2 decoration-code-gray hover:text-cyber-blue transition-colors"
             >
-              Developers
-            </Link>
+              Docs
+            </a>
             <a
               href="https://github.com/codingwithjae/link-shortener"
               target="_blank"

@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { loggerMiddleware } from '../middlewares/logger.middleware.js';
-import { rateLimiterMiddleware } from '../middlewares/rateLimiter.middleware.js';
 import authRouter from './auth.routes.js';
 import urlRouter from './url.routes.js';
 
@@ -8,7 +7,6 @@ const router = Router();
 const v1Router = Router();
 
 router.use(loggerMiddleware);
-router.use(rateLimiterMiddleware);
 
 v1Router.use('/auth', authRouter);
 v1Router.use('/urls', urlRouter);

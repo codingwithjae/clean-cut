@@ -14,6 +14,103 @@ export const envSchema = z
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     FRONTEND_URL: z.string().url().default('http://localhost:5173'),
     CORS_ORIGINS: z.string().optional(),
+
+    TRUST_PROXY_HOPS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().min(0).max(10).optional(),
+    ),
+
+    RATE_LIMIT_PUBLIC_SHORTEN_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(60 * 60 * 1000),
+    ),
+    RATE_LIMIT_PUBLIC_SHORTEN_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(100),
+    ),
+
+    RATE_LIMIT_REDIRECT_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(5 * 60 * 1000),
+    ),
+    RATE_LIMIT_REDIRECT_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(300),
+    ),
+
+    RATE_LIMIT_AUTH_LOGIN_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(15 * 60 * 1000),
+    ),
+    RATE_LIMIT_AUTH_LOGIN_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(10),
+    ),
+
+    RATE_LIMIT_AUTH_REGISTER_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(15 * 60 * 1000),
+    ),
+    RATE_LIMIT_AUTH_REGISTER_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(5),
+    ),
+
+    RATE_LIMIT_AUTH_FORGOT_PASSWORD_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(15 * 60 * 1000),
+    ),
+    RATE_LIMIT_AUTH_FORGOT_PASSWORD_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(5),
+    ),
+
+    RATE_LIMIT_AUTH_RESET_PASSWORD_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(15 * 60 * 1000),
+    ),
+    RATE_LIMIT_AUTH_RESET_PASSWORD_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(10),
+    ),
+
+    RATE_LIMIT_AUTH_API_KEY_REGENERATE_WINDOW_MS: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce
+        .number()
+        .int()
+        .positive()
+        .default(15 * 60 * 1000),
+    ),
+    RATE_LIMIT_AUTH_API_KEY_REGENERATE_MAX: z.preprocess(
+      (value) => (value === undefined || value === '' ? undefined : value),
+      z.coerce.number().int().positive().default(5),
+    ),
+
     SMTP_HOST: z.string().optional(),
     SMTP_PORT: z.string().default('587').transform(Number),
     SMTP_USER: z.string().optional(),

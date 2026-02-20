@@ -15,6 +15,7 @@ vi.mock('../../src/services/email.service.js', () => ({
 }));
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
@@ -24,9 +25,16 @@ app.use(errorMiddleware);
 describe('URL Management E2E', () => {
   let accessToken: string;
   let apiKey: string;
+  let setupRegistrationIpCounter = 1;
   const testUser = {
     email: faker.internet.email(),
     password: faker.internet.password({ length: 12 }),
+  };
+
+  const nextSetupRegistrationIp = () => {
+    const host = ((setupRegistrationIpCounter - 1) % 254) + 1;
+    setupRegistrationIpCounter++;
+    return `198.51.100.${host}`;
   };
 
   const createVerifiedUserAndLogin = async () => {
@@ -35,7 +43,10 @@ describe('URL Management E2E', () => {
       password: faker.internet.password({ length: 12, pattern: /[A-Za-z0-9!]/ }),
     };
 
-    await request(app).post('/api/v1/auth/register').send(user);
+    await request(app)
+      .post('/api/v1/auth/register')
+      .set('X-Forwarded-For', nextSetupRegistrationIp())
+      .send(user);
     await prisma.user.update({ where: { email: user.email }, data: { isVerified: true } });
 
     const loginRes = await request(app).post('/api/v1/auth/login').send(user);
@@ -51,7 +62,10 @@ describe('URL Management E2E', () => {
     await prisma.url.deleteMany();
     await prisma.user.deleteMany();
 
-    await request(app).post('/api/v1/auth/register').send(testUser);
+    await request(app)
+      .post('/api/v1/auth/register')
+      .set('X-Forwarded-For', nextSetupRegistrationIp())
+      .send(testUser);
     await prisma.user.update({ where: { email: testUser.email }, data: { isVerified: true } });
 
     const loginRes = await request(app).post('/api/v1/auth/login').send(testUser);
@@ -107,7 +121,10 @@ describe('URL Management E2E', () => {
 
   it('should fail with unverified API Key owner', async () => {
     const unverifiedUser = { email: faker.internet.email(), password: 'password' };
-    await request(app).post('/api/v1/auth/register').send(unverifiedUser);
+    await request(app)
+      .post('/api/v1/auth/register')
+      .set('X-Forwarded-For', nextSetupRegistrationIp())
+      .send(unverifiedUser);
     const user = await prisma.user.findUnique({ where: { email: unverifiedUser.email } });
 
     const key = faker.string.uuid();
@@ -324,5 +341,52 @@ describe('URL Management E2E', () => {
     expect(links.some((link) => link.shortId === ownerCreate.body.shortId)).toBe(true);
     expect(links.some((link) => link.shortId === otherCreate.body.shortId)).toBe(false);
     expect(links.every((link) => link.userId === owner?.id)).toBe(true);
+  });
+
+  it('should rate limit public shorten per IP', async () => {
+    const ip = '203.0.113.10';
+
+    for (let i = 0; i < 10; i++) {
+      const res = await request(app)
+        .post('/api/v1/urls/public')
+        .set('X-Forwarded-For', ip)
+        .send({ originalUrl: faker.internet.url() });
+      expect(res.status).toBe(201);
+    }
+
+    const blocked = await request(app)
+      .post('/api/v1/urls/public')
+      .set('X-Forwarded-For', ip)
+      .send({ originalUrl: faker.internet.url() });
+
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.statusCode).toBe(429);
+    expect(blocked.body.error).toBe('Too Many Requests');
+    expect(blocked.body.message).toContain('Too many shorten requests');
+  });
+
+  it('should rate limit redirects per IP', async () => {
+    const ip = '203.0.113.20';
+    const originalUrl = faker.internet.url();
+    const shortId = 'rl001';
+
+    await prisma.url.create({ data: { originalUrl, shortId } });
+
+    for (let i = 0; i < 5; i++) {
+      const res = await request(app)
+        .get(`/api/v1/urls/redirect/${shortId}`)
+        .set('X-Forwarded-For', ip);
+      expect(res.status).toBe(302);
+      expect(res.headers.location).toBe(originalUrl);
+    }
+
+    const blocked = await request(app)
+      .get(`/api/v1/urls/redirect/${shortId}`)
+      .set('X-Forwarded-For', ip);
+
+    expect(blocked.status).toBe(429);
+    expect(blocked.body.statusCode).toBe(429);
+    expect(blocked.body.error).toBe('Too Many Requests');
+    expect(blocked.body.message).toContain('Too many redirect requests');
   });
 });

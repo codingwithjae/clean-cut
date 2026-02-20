@@ -48,13 +48,24 @@ export const EditLinkModal = ({ isOpen, onClose, onUpdated, link }: EditLinkModa
       return;
     }
 
+    const currentNormalizedUrl = normalizeHttpUrl(link.originalUrl) ?? link.originalUrl;
+    const trimmedShortId = data.shortId?.trim();
+
+    const urlChanged = normalizedUrl !== currentNormalizedUrl;
+    const shortIdChanged = Boolean(trimmedShortId) && trimmedShortId !== link.shortId;
+
+    if (!urlChanged && !shortIdChanged) {
+      toast.info('No changes to save');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const trimmedShortId = data.shortId?.trim();
-      const payload = {
-        originalUrl: normalizedUrl,
-        newShortId: trimmedShortId && trimmedShortId !== link.shortId ? trimmedShortId : undefined,
+      const payload: { originalUrl?: string; newShortId?: string } = {
+        ...(urlChanged ? { originalUrl: normalizedUrl } : {}),
+        ...(shortIdChanged ? { newShortId: trimmedShortId as string } : {}),
       };
+
       await LinkService.update(link.shortId, payload);
       toast.success('Link updated successfully!');
       onUpdated();
@@ -101,10 +112,14 @@ export const EditLinkModal = ({ isOpen, onClose, onUpdated, link }: EditLinkModa
 
           <Input
             label="Short ID"
-            placeholder="my-custom-link"
+            placeholder="acme1"
             error={errors.shortId?.message}
             {...register('shortId')}
           />
+
+          <p className="-mt-4 ml-1 text-xs text-text-secondary">
+            3-5 characters. Leave unchanged to keep current.
+          </p>
 
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="ghost" onClick={onClose}>

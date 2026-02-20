@@ -43,7 +43,7 @@ const ForgotPasswordPage = () => {
       title="Forgot your password?"
       subtitle="Enter your email and we will send you a reset link"
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6">
         <Input
           label="Email Address"
           type="email"

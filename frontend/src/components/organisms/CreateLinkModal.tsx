@@ -37,9 +37,10 @@ export const CreateLinkModal = ({ isOpen, onClose, onCreated }: CreateLinkModalP
 
     setIsLoading(true);
     try {
+      const trimmedShortId = data.shortId?.trim();
       const payload = {
         originalUrl: normalizedUrl,
-        shortId: data.shortId || undefined,
+        shortId: trimmedShortId ? trimmedShortId : undefined,
       };
       await LinkService.create(payload);
       toast.success('Link created successfully!');
@@ -88,10 +89,14 @@ export const CreateLinkModal = ({ isOpen, onClose, onCreated }: CreateLinkModalP
 
           <Input
             label="Custom Short ID (Optional)"
-            placeholder="my-custom-link"
+            placeholder="acme1"
             error={errors.shortId?.message}
             {...register('shortId')}
           />
+
+          <p className="-mt-4 ml-1 text-xs text-text-secondary">
+            Optional. Use 3-5 characters. Leave blank to auto-generate.
+          </p>
 
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="ghost" onClick={onClose}>

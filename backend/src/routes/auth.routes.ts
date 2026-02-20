@@ -2,7 +2,14 @@ import { type RequestHandler, Router } from 'express';
 import passport from 'passport';
 import { env } from '../config/env.js';
 import { AuthController } from '../controllers/auth.controller.js';
-import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { authMiddleware, bearerAuthMiddleware } from '../middlewares/auth.middleware.js';
+import {
+  authApiKeyRegenerateRateLimiter,
+  authForgotPasswordRateLimiter,
+  authLoginRateLimiter,
+  authRegisterRateLimiter,
+  authResetPasswordRateLimiter,
+} from '../middlewares/rateLimiter.middleware.js';
 import { validateRequest } from '../middlewares/validation.middleware.js';
 import {
   changePasswordSchema,
@@ -23,17 +30,29 @@ const router = Router();
 
 router.post(
   '/register',
+  authRegisterRateLimiter as RequestHandler,
   validateRequest(registerSchema),
   AuthController.register as RequestHandler,
 );
 router.get('/verify/:token', AuthController.verifyEmail);
-router.post('/login', validateRequest(loginSchema), AuthController.login);
+router.post(
+  '/login',
+  authLoginRateLimiter as RequestHandler,
+  validateRequest(loginSchema),
+  AuthController.login,
+);
 router.post(
   '/forgot-password',
+  authForgotPasswordRateLimiter as RequestHandler,
   validateRequest(forgotPasswordSchema),
   AuthController.forgotPassword,
 );
-router.post('/reset-password', validateRequest(resetPasswordSchema), AuthController.resetPassword);
+router.post(
+  '/reset-password',
+  authResetPasswordRateLimiter as RequestHandler,
+  validateRequest(resetPasswordSchema),
+  AuthController.resetPassword,
+);
 router.get(
   '/me',
   authMiddleware as unknown as RequestHandler,
@@ -42,12 +61,13 @@ router.get(
 
 router.get(
   '/api-key',
-  authMiddleware as unknown as RequestHandler,
+  bearerAuthMiddleware as unknown as RequestHandler,
   AuthController.getApiKey as unknown as RequestHandler,
 );
 router.post(
   '/api-key/regenerate',
-  authMiddleware as unknown as RequestHandler,
+  bearerAuthMiddleware as unknown as RequestHandler,
+  authApiKeyRegenerateRateLimiter as RequestHandler,
   AuthController.regenerateApiKey as unknown as RequestHandler,
 );
 router.post(
