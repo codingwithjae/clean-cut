@@ -8,4 +8,4 @@ Disallow: /register
 Disallow: /verify-email
 Disallow: /auth/
 
-Sitemap: https://cleancut.link/sitemap.xml
+Sitemap: https://korta.click/sitemap.xml

@@ -116,7 +116,7 @@ export const envSchema = z
     SMTP_USER: z.string().optional(),
     SMTP_PASS: z.string().optional(),
     RESEND_API_KEY: z.string().min(1).optional(),
-    EMAIL_FROM: z.string().email().default('noreply@cleancut.link'),
+    EMAIL_FROM: z.string().email().default('noreply@korta.click'),
   })
   .refine((data) => data.JWT_SECRET || data.JWT_SECRET_KEY, {
     message: 'Either JWT_SECRET or JWT_SECRET_KEY must be provided',

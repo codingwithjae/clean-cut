@@ -1,12 +1,12 @@
-# Clean Cut
+# Korta
 
 Simple open-source link shortener for developers and creators.
 
 ## Live Links
 
-- App: `https://clean-cut-psi.vercel.app`
-- API: `https://cleancut.koyeb.app/api/v1`
-- API Health: `https://cleancut.koyeb.app/api/v1/health`
+- App: `https://korta.click/`
+- API: `https://api.korta.click/api/v1`
+- API Health: `https://api.korta.click/api/v1/health`
 
 ## Work In Progress
 
@@ -18,7 +18,7 @@ This project is currently under active development.
 
 ## Project Overview
 
-Clean Cut is a full-stack URL shortener split into:
+Korta is a full-stack URL shortener split into:
 
 - `frontend/`: React + Vite app (landing, auth, dashboard).
 - `backend/`: Express + Prisma API (auth, URL management, redirects).
@@ -90,7 +90,7 @@ Main user-facing capabilities:
 
 ### Base URL
 
-- Production: `https://cleancut.koyeb.app/api/v1`
+- Production: `https://api.korta.click/api/v1`
 - Local: `http://localhost:5000/api/v1`
 
 ### Authentication Modes
@@ -157,11 +157,11 @@ Notes:
 
 ### Production Stack
 
-- Frontend: Vercel
+- Frontend: Railway
 - Backend: Railway
 - Database: PostgreSQL (Railway-managed)
 
-### Backend Configuration Checklist (Koyeb)
+### Backend Configuration Checklist (Railway)
 
 - Public route/path: `/`
 - Health check path: `/api/v1/health`
@@ -176,19 +176,19 @@ Required env vars:
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GOOGLE_CALLBACK_URL`
-- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`
+- `RESEND_API_KEY`, `EMAIL_FROM`
 
-### Frontend Configuration Checklist (Vercel)
+### Frontend Configuration Checklist
 
 Required env vars:
 
-- `VITE_API_URL=https://cleancut.koyeb.app/api/v1`
-- `VITE_GOOGLE_AUTH_URL=https://cleancut.koyeb.app/api/v1/auth/google`
-- `VITE_BASE_URL=https://clean-cut-psi.vercel.app` (production app URL)
+- `VITE_API_URL=https://api.korta.click/api/v1`
+- `VITE_GOOGLE_AUTH_URL=https://api.korta.click/api/v1/auth/google`
+- `VITE_BASE_URL=https://korta.click` (production app URL)
 
 `VITE_BASE_URL` notes:
 
-- Production: set to the deployed frontend origin (Vercel URL).
+- Production: set to the deployed frontend origin.
 - Local development: set to local frontend origin (for example `http://localhost:5173`).
 
 ### Local Dev/Test Env Strategy
@@ -202,9 +202,9 @@ Required env vars:
 Set in Google Cloud OAuth client:
 
 - Authorized JavaScript origins:
-  - `https://clean-cut-psi.vercel.app`
+  - `https://korta.click/`
 - Authorized redirect URIs:
-  - `https://cleancut.koyeb.app/api/v1/auth/google/callback`
+  - `https://api.korta.click/api/v1/auth/google/callback`
 
 ## Getting Started
 
@@ -229,7 +229,7 @@ This file tracks notable engineering-level changes relevant to reviewers.
 
 ### 2026-02
 
-- Migrated from Koyeb to Railway.
+- Migrated infrastructure providers to Railway.
 - Normalized frontend API error handling with a centralized Axios interceptor.
 - Improved backend CORS handling for production origin allowlists.
 - Added explicit CORS preflight support (`OPTIONS`) in backend.

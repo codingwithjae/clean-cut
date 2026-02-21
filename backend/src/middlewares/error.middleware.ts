@@ -1,7 +1,6 @@
 import boom from '@hapi/boom';
 import type { NextFunction, Request, Response } from 'express';
 import { ZodError } from 'zod';
-
 import { env } from '../config/env.js';
 import { logger } from '../config/logger.js';
 

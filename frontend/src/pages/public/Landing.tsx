@@ -322,7 +322,7 @@ const LandingPage = () => {
         {}
         <section className="py-24 bg-midnight-light/50 border-t border-code-gray/30">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="sr-only">Why teams choose Clean Cut</h2>
+            <h2 className="sr-only">Why teams choose Korta</h2>
             <motion.div
               initial="hidden"
               whileInView="visible"
@@ -380,11 +380,11 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2">
             <span className="text-xl font-display font-bold text-white">
-              Clean Cut<span className="text-cyber-blue">.</span>
+              Korta<span className="text-cyber-blue">.</span>
             </span>
           </div>
           <div className="text-sm text-text-secondary text-center md:text-left">
-            © 2026 Clean Cut, made with ❤️ by{' '}
+            © 2026 Korta, made with ❤️ by{' '}
             <a
               href="https://github.com/codingwithjae"
               target="_blank"

@@ -31,10 +31,10 @@ export class EmailService {
       const result = await EmailService.getClient().emails.send({
         from: env.EMAIL_FROM,
         to: email,
-        subject: 'Verify your email - Clean Cut',
+        subject: 'Verify your email - Korta',
         html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-                        <h1 style="color: #3b82f6;">Welcome to Clean Cut, ${name}!</h1>
+                        <h1 style="color: #3b82f6;">Welcome to Korta, ${name}!</h1>
                         <p>Thank you for registering. Please verify your email address to get full access to your account, including API key generation.</p>
                         <div style="margin: 30px 0;">
                             <a href="${verificationUrl}" style="background-color: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">Verify Email Address</a>
@@ -70,7 +70,7 @@ export class EmailService {
       const result = await EmailService.getClient().emails.send({
         from: env.EMAIL_FROM,
         to: email,
-        subject: 'Reset your password - Clean Cut',
+        subject: 'Reset your password - Korta',
         html: `
                     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
                         <h1 style="color: #3b82f6;">Password reset request</h1>

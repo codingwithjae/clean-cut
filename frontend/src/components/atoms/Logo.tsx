@@ -15,7 +15,7 @@ export const Logo = () => {
         />
       </div>
       <span className="font-display font-bold text-xl tracking-tight text-white group-hover:text-cyber-blue transition-colors duration-300">
-        Clean Cut
+        Korta
       </span>
     </Link>
   );

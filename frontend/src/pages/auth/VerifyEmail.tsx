@@ -123,7 +123,7 @@ export const VerifyEmail = () => {
       </motion.div>
 
       <footer className="mt-12 text-xs text-text-secondary opacity-50">
-        © 2026 Clean Cut Inc. All rights reserved.
+        © 2026 Korta Inc. All rights reserved.
       </footer>
     </div>
   );

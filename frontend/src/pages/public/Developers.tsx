@@ -26,7 +26,7 @@ const DevelopersPage = () => {
             Back to Home
           </Link>
           <span className="font-display font-bold text-lg">
-            Clean Cut <span className="text-cyber-blue">API</span>
+            Korta <span className="text-cyber-blue">API</span>
           </span>
         </div>
       </header>
@@ -35,8 +35,8 @@ const DevelopersPage = () => {
         <div className="mb-12">
           <h1 className="text-4xl font-display font-bold mb-4">API Quickstart</h1>
           <p className="text-lg text-text-secondary">
-            Minimal examples for integrating Clean Cut. For the full Starlight docs, open the
-            external docs site.
+            Minimal examples for integrating Korta. For the full Starlight docs, open the external
+            docs site.
           </p>
           <div className="mt-5">
             <a href={DOCS_URL} target="_blank" rel="noopener noreferrer">
@@ -57,7 +57,7 @@ const DevelopersPage = () => {
               All API requests require an API key to be included in the header. You can generate
               your API key in the dashboard.
             </p>
-            <CodeBlock code={`X-API-Key: cc_live_51MzQ2...`} />
+            <CodeBlock code={`X-API-Key: korta_live_51MzQ2...`} />
           </section>
 
           <section>
@@ -75,7 +75,7 @@ const DevelopersPage = () => {
             </div>
             <CodeBlock
               code={`curl -X POST "${PROD_API_BASE_URL}/urls" \\
-  -H "X-API-Key: cc_live_..." \\
+  -H "X-API-Key: korta_live_..." \\
   -H "Content-Type: application/json" \\
   -d '{
     "originalUrl": "https://example.com/very/long/url",

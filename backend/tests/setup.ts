@@ -14,7 +14,7 @@ process.env.GOOGLE_CLIENT_ID ??= 'test-google-client-id';
 process.env.GOOGLE_CLIENT_SECRET ??= 'test-google-client-secret';
 process.env.GOOGLE_CALLBACK_URL ??= 'http://localhost:5000/api/v1/auth/google/callback';
 process.env.DATABASE_URL ??=
-  process.env.TEST_DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/cleancut_test';
+  process.env.TEST_DATABASE_URL ?? 'postgresql://postgres:postgres@localhost:5432/korta_test';
 
 // Keep rate-limit tests fast and deterministic.
 process.env.RATE_LIMIT_PUBLIC_SHORTEN_WINDOW_MS ??= '60000';

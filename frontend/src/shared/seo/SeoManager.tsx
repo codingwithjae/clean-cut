@@ -8,64 +8,64 @@ type RouteSeo = {
   canonicalPath?: string;
 };
 
-const DEFAULT_TITLE = 'Clean Cut | URL Shortener';
+const DEFAULT_TITLE = 'Korta | URL Shortener';
 const DEFAULT_DESCRIPTION =
-  'Clean Cut is a fast URL shortener with a developer-friendly API, custom short links, and dashboard analytics.';
+  'Korta is a fast URL shortener with a developer-friendly API, custom short links, and dashboard analytics.';
 
 const routeSeoConfig: Record<string, RouteSeo> = {
   '/': {
-    title: 'Clean Cut | Fast URL Shortener for Developers and Creators',
+    title: 'Korta | Fast URL Shortener for Developers and Creators',
     description:
-      'Shorten, manage, and share links in seconds. Use Clean Cut from the web dashboard or integrate with our API.',
+      'Shorten, manage, and share links in seconds. Use Korta from the web dashboard or integrate with our API.',
   },
   '/features': {
-    title: 'Clean Cut | Fast URL Shortener for Developers and Creators',
+    title: 'Korta | Fast URL Shortener for Developers and Creators',
     description:
-      'Shorten, manage, and share links in seconds. Use Clean Cut from the web dashboard or integrate with our API.',
+      'Shorten, manage, and share links in seconds. Use Korta from the web dashboard or integrate with our API.',
     canonicalPath: '/',
   },
   '/developers': {
-    title: 'Clean Cut API Quickstart | URL Shortener API',
+    title: 'Korta API Quickstart | URL Shortener API',
     description:
-      'Quickstart examples for the Clean Cut API: authenticate with X-API-Key and create short links programmatically.',
+      'Quickstart examples for the Korta API: authenticate with X-API-Key and create short links programmatically.',
   },
   '/login': {
-    title: 'Sign In | Clean Cut',
-    description: 'Sign in to your Clean Cut account.',
+    title: 'Sign In | Korta',
+    description: 'Sign in to your Korta account.',
     noindex: true,
   },
   '/register': {
-    title: 'Create Account | Clean Cut',
-    description: 'Create your Clean Cut account and start shortening links.',
+    title: 'Create Account | Korta',
+    description: 'Create your Korta account and start shortening links.',
     noindex: true,
   },
   '/verify-email': {
-    title: 'Verify Email | Clean Cut',
+    title: 'Verify Email | Korta',
     description: 'Verify your email to complete account setup.',
     noindex: true,
   },
   '/auth/callback': {
-    title: 'Authentication | Clean Cut',
+    title: 'Authentication | Korta',
     description: 'Completing authentication.',
     noindex: true,
   },
   '/dashboard': {
-    title: 'Dashboard | Clean Cut',
+    title: 'Dashboard | Korta',
     description: 'Manage your links and analytics.',
     noindex: true,
   },
   '/dashboard/links': {
-    title: 'My Links | Clean Cut',
+    title: 'My Links | Korta',
     description: 'Manage your shortened links.',
     noindex: true,
   },
   '/dashboard/api': {
-    title: 'API Keys | Clean Cut',
-    description: 'Manage API keys for Clean Cut integrations.',
+    title: 'API Keys | Korta',
+    description: 'Manage API keys for Korta integrations.',
     noindex: true,
   },
   '/dashboard/account': {
-    title: 'Account Settings | Clean Cut',
+    title: 'Account Settings | Korta',
     description: 'Manage your account security and password.',
     noindex: true,
   },
@@ -101,7 +101,7 @@ export const SeoManager = () => {
 
   useEffect(() => {
     const seo = routeSeoConfig[location.pathname] || {
-      title: 'Page Not Found | Clean Cut',
+      title: 'Page Not Found | Korta',
       description: 'The page you are looking for could not be found.',
       noindex: true,
     };

@@ -1,5 +1,5 @@
 {
-  "name": "clean-cut-backend",
+  "name": "korta-backend",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -12,8 +12,8 @@
     "build": "prisma generate && tsc",
     "test": "vitest --config vitest.config.ts",
     "test:coverage": "vitest --config vitest.config.ts --coverage",
-    "test:local": "dotenv -e .env.development -- sh -c 'NODE_ENV=test ENV_FILE=.env.development DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/cleancut_test}\" vitest run --config vitest.config.ts'",
-    "test:local:coverage": "dotenv -e .env.development -- sh -c 'NODE_ENV=test ENV_FILE=.env.development DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/cleancut_test}\" vitest run --config vitest.config.ts --coverage'",
+    "test:local": "dotenv -e .env.development -- sh -c 'NODE_ENV=test ENV_FILE=.env.development DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/korta_test}\" vitest run --config vitest.config.ts'",
+    "test:local:coverage": "dotenv -e .env.development -- sh -c 'NODE_ENV=test ENV_FILE=.env.development DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/korta_test}\" vitest run --config vitest.config.ts --coverage'",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "prisma:generate": "prisma generate",
@@ -22,7 +22,7 @@
     "prisma:migrate:dev:local": "dotenv -e .env.development -- prisma migrate dev",
     "prisma:migrate:deploy:local": "dotenv -e .env.development -- prisma migrate deploy",
     "prisma:migrate:status:local": "dotenv -e .env.development -- prisma migrate status",
-    "prisma:migrate:deploy:test:local": "dotenv -e .env.development -- sh -c 'DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/cleancut_test}\" prisma migrate deploy'",
+    "prisma:migrate:deploy:test:local": "dotenv -e .env.development -- sh -c 'DATABASE_URL=\"${TEST_DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/korta_test}\" prisma migrate deploy'",
     "prisma:studio": "prisma studio",
     "prisma:studio:local": "dotenv -e .env.development -- NODE_ENV=development prisma studio",
     "legacy:dev": "nodemon --watch . --ext js --exec node index.js"
