@@ -1,7 +1,7 @@
+import { randomUUID } from 'node:crypto';
 import boom from '@hapi/boom';
 import argon2 from 'argon2';
 import type { NextFunction, Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import { logger } from '../config/logger.js';
 import prisma from '../config/prisma.js';
 import type { AuthRequest } from '../middlewares/auth.middleware.js';
@@ -22,7 +22,7 @@ export class AuthController {
         }
 
         const passwordHash = await argon2.hash(password);
-        const verificationToken = uuidv4();
+        const verificationToken = randomUUID();
 
         await UserModel.update(existingUser.id, {
           password: passwordHash,
@@ -51,7 +51,7 @@ export class AuthController {
       }
 
       const passwordHash = await argon2.hash(password);
-      const verificationToken = uuidv4();
+      const verificationToken = randomUUID();
 
       const createdUser = await UserModel.create({
         email,
@@ -162,7 +162,7 @@ export class AuthController {
       const user = await UserModel.findByEmail(email);
 
       if (user?.password) {
-        const passwordResetToken = uuidv4();
+        const passwordResetToken = randomUUID();
         const passwordResetExpiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
         await UserModel.update(user.id, {
@@ -258,7 +258,7 @@ export class AuthController {
     const userId = req.user?.id;
     if (!userId) return next(boom.unauthorized());
 
-    const newApiKey = uuidv4();
+    const newApiKey = randomUUID();
 
     try {
       const existingUser = await UserModel.findById(userId);

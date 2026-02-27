@@ -171,12 +171,28 @@ Required env vars:
 
 - `DATABASE_URL`
 - `JWT_SECRET` (or `JWT_SECRET_KEY`)
-- `FRONTEND_URL`
-- `CORS_ORIGINS`
 - `GOOGLE_CLIENT_ID`
 - `GOOGLE_CLIENT_SECRET`
 - `GOOGLE_CALLBACK_URL`
-- `RESEND_API_KEY`, `EMAIL_FROM`
+- `RESEND_API_KEY` (required in production for email sending)
+
+Recommended env vars:
+
+- `FRONTEND_URL` (defaults to `http://localhost:5173` if unset)
+- `CORS_ORIGINS` (optional; falls back to `FRONTEND_URL` when unset)
+- `EMAIL_FROM` (optional; defaults to `noreply@korta.click`)
+- `TRUST_PROXY_HOPS` (recommended for reverse proxy deployments like Railway)
+
+Optional test/tooling env vars:
+
+- `TEST_DATABASE_URL`
+- `SHADOW_DATABASE_URL`
+
+Env file resolution:
+
+- Backend defaults to `.env.development`.
+- Production defaults to `.env.production`.
+- Override with `ENV_FILE` (example: `ENV_FILE=.env.staging`).
 
 ### Frontend Configuration Checklist
 
@@ -191,9 +207,15 @@ Required env vars:
 - Production: set to the deployed frontend origin.
 - Local development: set to local frontend origin (for example `http://localhost:5173`).
 
+Local env files:
+
+- Use `.env.development` for shared local frontend defaults.
+- Use `.env.development.local` for machine-specific local overrides.
+
 ### Local Dev/Test Env Strategy
 
 - Use `.env.development` for local backend/frontend development defaults.
+- Optionally override backend env file selection with `ENV_FILE`.
 - Use `TEST_DATABASE_URL` for automated test database connections.
 - Use `SHADOW_DATABASE_URL` for Prisma migration/test shadow database isolation.
 

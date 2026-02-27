@@ -1,6 +1,6 @@
+import { randomUUID } from 'node:crypto';
 import boom from '@hapi/boom';
 import type { NextFunction, Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
 import type { AuthRequest } from '../middlewares/auth.middleware.js';
 import { UrlModel } from '../models/url.model.js';
 
@@ -8,7 +8,7 @@ export class ShortenController {
   static async privateShorten(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     const { originalUrl, shortId: customShortId } = req.body;
     const userId = req.user?.id;
-    const shortId = customShortId || uuidv4().slice(0, 5);
+    const shortId = customShortId || randomUUID().slice(0, 5);
 
     try {
       if (customShortId) {
@@ -31,7 +31,7 @@ export class ShortenController {
   static async publicShorten(req: AuthRequest, res: Response, next: NextFunction): Promise<void> {
     const { originalUrl } = req.body;
     const userId = req.user?.id;
-    const shortId = uuidv4().slice(0, 5);
+    const shortId = randomUUID().slice(0, 5);
 
     try {
       await UrlModel.create({

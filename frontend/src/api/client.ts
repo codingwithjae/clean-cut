@@ -18,6 +18,31 @@ const STATUS_DEFAULT_MESSAGES: Record<number, string> = {
   500: 'Server error. Please try again in a moment.',
 };
 
+const COLD_START_MESSAGE = 'Waking up Korta... first request can take a few seconds.';
+
+const isColdStartError = (error: unknown, statusCode?: number) => {
+  if (!axios.isAxiosError(error)) {
+    return false;
+  }
+
+  if (statusCode === 502 || statusCode === 503 || statusCode === 504) {
+    return true;
+  }
+
+  const data = (error.response?.data ?? {}) as ApiErrorPayload;
+  const messageText = [data.error, data.message, error.message]
+    .filter((value): value is string => typeof value === 'string' && value.length > 0)
+    .join(' ')
+    .toLowerCase();
+
+  return (
+    messageText.includes('gateway timeout') ||
+    messageText.includes('bad gateway') ||
+    messageText.includes('service unavailable') ||
+    messageText.includes('upstream')
+  );
+};
+
 export interface ApiError extends Error {
   isApiError: true;
   statusCode?: number;
@@ -33,7 +58,9 @@ const toApiError = (error: unknown): ApiError => {
   if (axios.isAxiosError(error)) {
     const data = (error.response?.data ?? {}) as ApiErrorPayload;
     const statusCode = data.statusCode ?? error.response?.status;
+    const coldStartMessage = isColdStartError(error, statusCode) ? COLD_START_MESSAGE : undefined;
     const message =
+      coldStartMessage ??
       data.message ??
       (statusCode ? STATUS_DEFAULT_MESSAGES[statusCode] : undefined) ??
       error.message ??

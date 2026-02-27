@@ -1,5 +1,6 @@
 import boom from '@hapi/boom';
 import cors from 'cors';
+import type { RequestHandler } from 'express';
 import express from 'express';
 import helmet from 'helmet';
 import passport from 'passport';
@@ -42,7 +43,7 @@ app.use(helmet());
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 app.use(express.json());
-app.use(passport.initialize());
+app.use(passport.initialize() as unknown as RequestHandler);
 
 app.get('/', (_req, res) => {
   res.status(200).json({
