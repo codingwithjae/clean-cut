@@ -41,7 +41,7 @@ const trustProxyHops = env.TRUST_PROXY_HOPS ?? (env.NODE_ENV === 'production' ? 
 app.set('trust proxy', trustProxyHops);
 app.use(helmet());
 app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+app.options('/{*splat}', cors(corsOptions));
 app.use(express.json());
 app.use(passport.initialize() as unknown as RequestHandler);
 
