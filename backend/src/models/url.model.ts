@@ -16,34 +16,64 @@ const TRANSIENT_DB_ERROR_CODES = new Set([
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-const getErrorCode = (error: unknown): string | undefined => {
-  if (!error || typeof error !== 'object') {
-    return undefined;
-  }
+const getErrorSignals = (error: unknown): { codes: string[]; messages: string[] } => {
+  const codes: string[] = [];
+  const messages: string[] = [];
 
-  const maybeCode = (error as { code?: unknown }).code;
-  if (typeof maybeCode === 'string' && maybeCode.length > 0) {
-    return maybeCode.toUpperCase();
-  }
+  const visit = (value: unknown) => {
+    if (!value || typeof value !== 'object') {
+      if (typeof value === 'string') {
+        messages.push(value.toLowerCase());
+      }
+      return;
+    }
 
-  return undefined;
+    const maybeCode = (value as { code?: unknown }).code;
+    if (typeof maybeCode === 'string' && maybeCode.length > 0) {
+      codes.push(maybeCode.toUpperCase());
+    }
+
+    const maybeOriginalCode = (value as { originalCode?: unknown }).originalCode;
+    if (typeof maybeOriginalCode === 'string' && maybeOriginalCode.length > 0) {
+      codes.push(maybeOriginalCode.toUpperCase());
+    }
+
+    const maybeMessage = (value as { message?: unknown }).message;
+    if (typeof maybeMessage === 'string' && maybeMessage.length > 0) {
+      messages.push(maybeMessage.toLowerCase());
+    }
+
+    const maybeOriginalMessage = (value as { originalMessage?: unknown }).originalMessage;
+    if (typeof maybeOriginalMessage === 'string' && maybeOriginalMessage.length > 0) {
+      messages.push(maybeOriginalMessage.toLowerCase());
+    }
+
+    const maybeCause = (value as { cause?: unknown }).cause;
+    if (maybeCause) {
+      visit(maybeCause);
+    }
+  };
+
+  visit(error);
+  return { codes, messages };
 };
 
 const isTransientDbError = (error: unknown): boolean => {
-  const code = getErrorCode(error);
-  if (code && TRANSIENT_DB_ERROR_CODES.has(code)) {
+  const { codes, messages } = getErrorSignals(error);
+
+  if (codes.some((code) => TRANSIENT_DB_ERROR_CODES.has(code))) {
     return true;
   }
 
-  const message =
-    error instanceof Error ? error.message.toLowerCase() : String(error ?? '').toLowerCase();
+  const fullMessage = messages.join(' ');
 
   return (
-    message.includes('timed out') ||
-    message.includes('timeout') ||
-    message.includes('connection') ||
-    message.includes('database is starting up') ||
-    message.includes('server closed the connection')
+    fullMessage.includes('timed out') ||
+    fullMessage.includes('timeout') ||
+    fullMessage.includes('connection') ||
+    fullMessage.includes('database system is starting up') ||
+    fullMessage.includes('database is starting up') ||
+    fullMessage.includes('server closed the connection')
   );
 };
 
@@ -67,7 +97,7 @@ export class UrlModel {
         const hasRetry = attempt < maxRetries;
 
         if (transient && hasRetry) {
-          await sleep(200 * (attempt + 1));
+          await sleep(300 * (attempt + 1));
           continue;
         }
 

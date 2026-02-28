@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { api } from './client';
+import { type ApiError, api } from './client';
 
 export interface Link {
   id: number;
@@ -16,35 +15,27 @@ export interface CreateLinkData {
 
 const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
 
-const isRetryableColdStartError = (error: unknown) => {
-  if (!axios.isAxiosError(error)) {
+const RETRYABLE_STATUS_CODES = new Set([500, 502, 503, 504]);
+const RETRY_DELAYS_MS = [800, 1600] as const;
+
+const getRetryDelayMs = (attempt: number): number => {
+  const index = Math.min(attempt, RETRY_DELAYS_MS.length - 1);
+  return RETRY_DELAYS_MS[index] ?? 1600;
+};
+
+const isApiError = (error: unknown): error is ApiError =>
+  error instanceof Error && (error as Partial<ApiError>).isApiError === true;
+
+const shouldRetryCreatePublic = (error: unknown) => {
+  if (!isApiError(error)) {
     return false;
   }
 
-  const status = error.response?.status;
-  if (status === 500 || status === 502 || status === 503 || status === 504) {
+  if (error.statusCode === undefined) {
     return true;
   }
 
-  const payload = error.response?.data as
-    | {
-        error?: string;
-        message?: string;
-      }
-    | undefined;
-
-  const message = [payload?.error, payload?.message, error.message]
-    .filter((value): value is string => typeof value === 'string' && value.length > 0)
-    .join(' ')
-    .toLowerCase();
-
-  return (
-    message.includes('timed out') ||
-    message.includes('timeout') ||
-    message.includes('service unavailable') ||
-    message.includes('gateway') ||
-    message.includes('upstream')
-  );
+  return RETRYABLE_STATUS_CODES.has(error.statusCode);
 };
 
 export const LinkService = {
@@ -59,7 +50,7 @@ export const LinkService = {
   },
 
   createPublic: async (originalUrl: string): Promise<{ shortId: string; shortUrl: string }> => {
-    const maxRetries = 1;
+    const maxRetries = RETRY_DELAYS_MS.length;
 
     for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
       try {
@@ -69,12 +60,11 @@ export const LinkService = {
 
         return response.data;
       } catch (error) {
-        const shouldRetry = isRetryableColdStartError(error) && attempt < maxRetries;
-        if (!shouldRetry) {
+        if (!shouldRetryCreatePublic(error) || attempt >= maxRetries) {
           throw error;
         }
 
-        await sleep(1200);
+        await sleep(getRetryDelayMs(attempt));
       }
     }
 
